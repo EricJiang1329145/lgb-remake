@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="龙高北重开模拟器 - 模拟初中三年生活的文字剧情游戏">
+  <meta name="keywords" content="龙高北, 重开模拟器, 初中生活, 文字游戏, 模拟经营">
+  <title>龙高北重开模拟器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+  
+<body>
+  <div class="container">
+    <!-- 左侧：导航面板 -->
+    <div class="nav-panel" id="nav-panel">
+      <div class="nav-header">
+        <div class="panel-header">
+          <h3>龙高北重开模拟器</h3>
+          <button class="panel-collapse-btn" onclick="toggleNavPanel()" id="nav-collapse-btn">
+            <span id="nav-collapse-icon">◀</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 导航菜单 -->
+      <div class="nav-menu">
+        <div class="nav-item" onclick="toggleNavSection('player-stats')">
+          <span class="nav-icon">👤</span>
+          <span class="nav-text">玩家属性</span>
+          <span class="nav-arrow">▼</span>
+        </div>
+        <div class="nav-section" id="player-stats-section" style="display: none;">
+          <div class="player-stats">
+            <div class="player-stats-detail">
+              <!-- 学业属性 -->
+              <p data-tooltip="中考语文满分">语文: <span id="academic-chinese">120</span></p>
+              <p data-tooltip="中考数学满分">数学: <span id="academic-math">100</span></p>
+              <p data-tooltip="中考英语满分">英语: <span id="academic-english">100</span></p>
+              <p data-tooltip="中考政治满分">政治: <span id="academic-politics">50</span></p>
+              <p data-tooltip="中考历史满分">历史: <span id="academic-history">70</span></p>
+              <p data-tooltip="初二开始加入" id="academic-physics" style="display:none;">物理: <span id="academic-physics-val">70</span></p>
+              <p data-tooltip="初三开始加入" id="academic-chemistry" style="display:none;">化学: <span id="academic-chemistry-val">70</span></p>
+              <p data-tooltip="生地会考后移除" id="academic-biology" style="display:none;">生物: <span id="academic-biology-val">100</span></p>
+              <p data-tooltip="生地会考后移除" id="academic-geography" style="display:none;">地理: <span id="academic-geography-val">100</span></p>
+              <p data-tooltip="中考体育满分">体育: <span id="academic-sports">50</span></p>
+              <!-- 能力属性 -->
+              <p data-tooltip="影响记忆效果">记忆力: <span id="ability-memory">50</span></p>
+              <p data-tooltip="影响理解能力">理解力: <span id="ability-comprehension">50</span></p>
+              <p data-tooltip="影响专注时长">专注力: <span id="ability-focus">50</span></p>
+              <p data-tooltip="影响考试成绩波动">考试心态: <span id="ability-mindset">50</span></p>
+              <!-- 状态属性 -->
+              <p data-tooltip="影响活动参与">体力: <span id="status-physical">100</span></p>
+              <p data-tooltip="影响学习效率">精力: <span id="status-energy">100</span></p>
+              <p data-tooltip="过高会导致负面事件">压力值: <span id="status-stress">0</span></p>
+              <!-- 特殊属性 -->
+              <p data-tooltip="考试时的爆发力" id="special-lastStand" style="display:none;">孤注一掷: <span id="special-lastStand-val">0</span></p>
+              <p data-tooltip="逆境中的翻盘能力" id="special-survival" style="display:none;">绝地求生: <span id="special-survival-val">0</span></p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="nav-item" onclick="toggleNavSection('daily-actions')">
+          <span class="nav-icon">🏃</span>
+          <span class="nav-text">日常行动</span>
+          <span class="nav-arrow">▼</span>
+        </div>
+        <div class="nav-section" id="daily-actions-section" style="display: none;">
+          <div class="daily-action-panel" id="daily-action-panel">
+            <div class="action-options" id="action-options">
+              <!-- 行动选项动态插入 -->
+            </div>
+            <button onclick="backToGame()" class="btn gray">返回</button>
+          </div>
+        </div>
+        
+        <div class="nav-item" onclick="toggleNavSection('academic-panel')">
+          <span class="nav-icon">📚</span>
+          <span class="nav-text">学业面板</span>
+          <span class="nav-arrow">▼</span>
+        </div>
+        <div class="nav-section" id="academic-panel-section" style="display: none;">
+          <div class="academic-panel" id="academic-panel">
+            <div class="subject-list" id="subject-list">
+              <!-- 科目列表动态插入 -->
+            </div>
+            <button onclick="backToGame()" class="btn gray">返回</button>
+          </div>
+        </div>
+        
+        <div class="nav-item" onclick="toggleNavSection('social-panel')">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">人际关系</span>
+          <span class="nav-arrow">▼</span>
+        </div>
+        <div class="nav-section" id="social-panel-section" style="display: none;">
+          <div class="social-panel" id="social-panel">
+            <div class="social-sections">
+              <div class="social-section">
+                <h3>同学</h3>
+                <div id="classmates-list"></div>
+              </div>
+              <div class="social-section">
+                <h3>舍友</h3>
+                <div id="dormmates-list"></div>
+              </div>
+              <div class="social-section">
+                <h3>老师</h3>
+                <div id="teachers-list"></div>
+              </div>
+            </div>
+            <button onclick="backToGame()" class="btn gray">返回</button>
+          </div>
+        </div>
+        
+        <div class="nav-item" onclick="showAchievements()">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-text">成就查看</span>
+          <span class="nav-arrow">▶</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 成就面板（弹窗） -->
+    <div class="achievement-panel" id="achievement-panel" style="display:none;">
+      <div class="achievement-content">
+        <h2>成就列表</h2>
+        <div class="achievement-list" id="achievement-list">
+          <!-- 成就列表动态插入 -->
+        </div>
+        <button onclick="closeAchievements()" class="btn gray">关闭</button>
+      </div>
+    </div>
+
+    <!-- 中间：游戏主界面 -->
+    <div class="game-panel">
+      <!-- 开始界面 -->
+      <div class="start-screen" id="start-screen">
+        <h1 id="game-title">龙高北重开模拟器</h1>
+        <p class="game-subtitle">初中三年，重新来过</p>
+        <div class="start-buttons">
+          <button onclick="startNewGame()" class="btn blue">新游戏</button>
+          <button onclick="showChangelog()" class="btn purple">更新日志</button>
+        </div>
+        <div class="changelog-content" id="changelog-content" style="display:none;">
+          <h3>更新日志</h3>
+          <div id="changelog-entries"></div>
+          <button onclick="backToMainMenu()" class="btn blue">返回主菜单</button>
+        </div>
+      </div>
+
+      <!-- 剧情界面 -->
+      <div class="story-panel" id="story-panel" style="display:none;">
+        <h2 id="story-title">故事开始</h2>
+        <div class="story-content" id="story-content">
+          <!-- 剧情内容动态插入 -->
+        </div>
+        <button onclick="proceedToNext()" class="btn blue">继续</button>
+      </div>
+
+      <!-- 天赋分配界面 -->
+      <div class="allocate-panel" id="allocate-panel" style="display:none;">
+        <h2>初始天赋分配</h2>
+        <p>你有 <span id="talent-points">10</span> 点天赋可以分配</p>
+        <div class="allocate-options">
+          <div class="allocate-option">
+            <label>记忆力:</label>
+            <input type="number" id="talent-memory" min="0" max="10" value="3">
+          </div>
+          <div class="allocate-option">
+            <label>理解力:</label>
+            <input type="number" id="talent-comprehension" min="0" max="10" value="2">
+          </div>
+          <div class="allocate-option">
+            <label>专注力:</label>
+            <input type="number" id="talent-focus" min="0" max="10" value="3">
+          </div>
+          <div class="allocate-option">
+            <label>考试心态:</label>
+            <input type="number" id="talent-mindset" min="0" max="10" value="2">
+          </div>
+        </div>
+        <button onclick="confirmTalentAllocation()" class="btn blue">确认分配</button>
+      </div>
+
+      <!-- 游戏主界面 -->
+      <div class="game-interface" id="game-interface" style="display:none;">
+        <!-- 时间信息 -->
+        <div class="time-info">
+          <h2 id="current-date">2024年9月1日</h2>
+          <p id="current-phase">第一周 - 常规上课</p>
+        </div>
+
+        <!-- 多日事件状态 -->
+        <div class="multi-day-event-status" id="multi-day-event-status" style="display:none;">
+          <h3 id="multi-day-event-title">事件名称</h3>
+          <p id="multi-day-event-progress">进度信息</p>
+          <button onclick="game.skipMultiDayEvent()" class="btn red">跳过事件</button>
+        </div>
+
+        <!-- 快捷操作 -->
+        <div class="quick-actions">
+          <button onclick="advanceDay()" class="btn orange">推进一天</button>
+        </div>
+      </div>
+
+      <!-- 事件面板（弹窗） -->
+      <div class="event-panel" id="event-panel">
+        <div class="event-content">
+          <h2 id="event-title">事件标题</h2>
+          <p id="event-description">事件描述...</p>
+          <p id="event-effect"></p>
+          <div class="event-choice-panel" id="event-choice-panel">
+            <!-- 选项动态插入 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 考试界面 -->
+      <div class="exam-panel" id="exam-panel" style="display:none;">
+        <h2 id="exam-title">月考</h2>
+        <div class="exam-subjects" id="exam-subjects">
+          <!-- 考试科目动态插入 -->
+        </div>
+      </div>
+
+      <!-- 结果展示 -->
+      <div class="result-panel" id="result-panel" style="display:none;">
+        <h2 id="result-title">考试结果</h2>
+        <div class="result-content" id="result-content">
+          <!-- 结果内容动态插入 -->
+        </div>
+        <button onclick="backToGame()" class="btn blue">确认</button>
+      </div>
+    </div>
+
+    <!-- 右侧：日志面板 -->
+    <div class="log-panel" id="log-panel">
+      <div class="log-header">
+        <div class="panel-header">
+          <h3>日志面板</h3>
+          <button class="panel-collapse-btn" onclick="toggleLogPanel()" id="log-collapse-btn">
+            <span id="log-collapse-icon">▶</span>
+          </button>
+        </div>
+      </div>
+      <!-- 今日语录 -->
+      <div class="daily-quote" id="daily-quote">
+        <h3>今日语录</h3>
+        <div class="quote-content" id="quote-content">
+          <p class="quote-text">今日语录</p>
+        </div>
+        <div class="quote-actions">
+          <button onclick="editQuote()" class="btn gray" style="padding: 5px 10px; font-size: 12px;">自定义</button>
+        </div>
+      </div>
+
+      <!-- 事件预告 -->
+      <div class="event-preview" id="event-preview">
+        <h3>事件预告</h3>
+        <div id="event-preview-content">
+          <p>暂无事件预告</p>
+        </div>
+      </div>
+
+      <!-- 游戏日志 -->
+      <div class="game-log-section">
+        <h3>游戏日志</h3>
+        <div id="game-log">
+          <!-- 游戏日志动态插入 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成就查看功能 -->
+  <script>
+    // 成就数据
+    let achievementsData = [];
+    
+    // 从content-config.json加载成就数据
+    async function loadAchievements() {
+      try {
+        const response = await fetch('content-config.json');
+        const config = await response.json();
+        
+        if (config.achievements && Array.isArray(config.achievements)) {
+          achievementsData = config.achievements;
+          console.log('从content-config.json加载成就成功，共', achievementsData.length, '条');
+        }
+      } catch (e) {
+        console.warn('无法加载content-config.json中的成就:', e);
+        // 使用默认成就数据
+        achievementsData = Object.values(ACHIEVEMENTS);
+      }
+    }
+    
+    // 显示成就弹窗
+    async function showAchievements() {
+      // 如果成就数据未加载，先加载
+      if (achievementsData.length === 0) {
+        await loadAchievements();
+      }
+      
+      // 渲染成就列表（仅显示已达成的）
+      renderAchievements();
+      
+      // 显示弹窗
+      const panel = document.getElementById('achievement-panel');
+      panel.style.display = 'flex';
+    }
+    
+    // 关闭成就弹窗
+    function closeAchievements() {
+      const panel = document.getElementById('achievement-panel');
+      panel.style.display = 'none';
+    }
+    
+    // 渲染成就列表（仅显示已达成的）
+    function renderAchievements() {
+      const achievementList = document.getElementById('achievement-list');
+      achievementList.innerHTML = '';
+      
+      // 获取已达成的成就列表（从游戏存档中读取）
+      const savedGame = StorageUtils.load('lgb_save');
+      const achievedAchievements = savedGame ? savedGame.achievements : [];
+      
+      // 过滤并渲染已达成的成就
+      const achievedAchievementData = achievementsData.filter(achievement => 
+        achievedAchievements.includes(achievement.id)
+      );
+      
+      if (achievedAchievementData.length === 0) {
+        // 如果没有达成的成就，显示提示信息
+        achievementList.innerHTML = `
+          <div style="text-align: center; padding: 20px; color: #666;">
+            <p>暂无已达成的成就</p>
+            <p style="font-size: 12px; margin-top: 10px;">继续努力，解锁更多成就吧！</p>
+          </div>
+        `;
+        return;
+      }
+      
+      achievedAchievementData.forEach(achievement => {
+        const achievementItem = document.createElement('div');
+        achievementItem.className = 'achievement-item achieved';
+        
+        achievementItem.innerHTML = `
+          <div class="achievement-header">
+            <span class="achievement-icon">${achievement.icon || '🏆'}</span>
+            <span class="achievement-name">${achievement.name}</span>
+            <span class="achievement-rarity ${achievement.rarity || 'common'}">${achievement.rarity || 'common'}</span>
+          </div>
+          <div class="achievement-description">${achievement.description}</div>
+          <div class="achievement-condition">达成条件: ${getConditionText(achievement.condition)}</div>
+        `;
+        
+        achievementList.appendChild(achievementItem);
+      });
+    }
+    
+    // 将成就条件转换为可读文本
+    function getConditionText(condition) {
+      if (!condition) return '未知条件';
+      
+      const conditionType = condition.type;
+      switch (conditionType) {
+        case 'academic':
+          if (condition.field === 'any') {
+            return `任意科目${condition.operator}${condition.value}`;
+          } else if (condition.field === 'all') {
+            return `所有科目${condition.operator}${condition.value}`;
+          } else {
+            const subjectNames = {
+              'chinese': '语文',
+              'math': '数学',
+              'english': '英语',
+              'politics': '政治',
+              'history': '历史',
+              'physics': '物理',
+              'chemistry': '化学',
+              'biology': '生物',
+              'geography': '地理',
+              'sports': '体育'
+            };
+            return `${subjectNames[condition.field] || condition.field}${condition.operator}${condition.value}`;
+          }
+        case 'rank':
+          return `考试排名${condition.operator}${condition.value}`;
+        default:
+          return JSON.stringify(condition);
+      }
+    }
+    
+    // 初始化时加载成就数据
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadAchievements();
+    });
+  </script>
+  
+  <!-- 脚本加载 -->
+  <script src="content-loader.js"></script>
+  <script src="data.js"></script>
+  <script src="utils.js"></script>
+  <script src="events.js"></script>
+  <script src="exam-embed.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

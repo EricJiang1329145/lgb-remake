@@ -1,0 +1,2272 @@
+{
+  "version": "2.0.0",
+  "lastUpdated": "2025-01-01",
+  "author": "玩家定制版",
+  "game": {
+    "title": "龙高北重开模拟器",
+    "subtitle": "初中三年，重新来过",
+    "version": "v0.1.0",
+    "author": "玩家定制版",
+    "schoolName": "龙华高级中学教育集团观澜校区",
+    "highSchoolName": "龙华高级中学",
+    "startYear": 2022,
+    "endYear": 2025
+  },
+  "ui": {
+    "startScreen": {
+      "newGame": "新游戏",
+      "continue": "继续游戏",
+      "changelog": "更新日志",
+      "backToMenu": "返回主菜单"
+    },
+    "panels": {
+      "playerStats": "玩家属性",
+      "gameLog": "游戏日志",
+      "dailyActions": "日常行动",
+      "academicPanel": "学业面板",
+      "socialPanel": "人际关系",
+      "timelinePanel": "时间线",
+      "upcomingEvents": "即将到来"
+    },
+    "actions": {
+      "study": {
+        "name": "📚 认真学习",
+        "description": "选择一个科目进行学习，提升该科目成绩",
+        "energyCost": 20,
+        "timeCost": 1
+      },
+      "rest": {
+        "name": "😴 休息一下",
+        "description": "恢复精力和体力",
+        "energyCost": -10,
+        "timeCost": 1
+      },
+      "askTeacher": {
+        "name": "📖 问老师问题",
+        "description": "去办公室向老师请教问题",
+        "energyCost": 10,
+        "timeCost": 1
+      },
+      "club": {
+        "name": "🎨 社团活动",
+        "description": "参加社团活动",
+        "energyCost": 15,
+        "timeCost": 1
+      },
+      "exercise": {
+        "name": "🏃 锻炼身体",
+        "description": "进行体育锻炼",
+        "energyCost": 25,
+        "timeCost": 1
+      },
+      "social": {
+        "name": "👥 社交活动",
+        "description": "和同学交流，维护人际关系",
+        "energyCost": 5,
+        "timeCost": 1
+      },
+      "selfTest": {
+        "name": "📝 自测",
+        "description": "进行自我测试，检验学习效果",
+        "energyCost": 25,
+        "timeCost": 1
+      },
+      "review": {
+        "name": "🔄 复习",
+        "description": "复习已学内容，巩固知识点",
+        "energyCost": 15,
+        "timeCost": 1
+      }
+    }
+  },
+  "effects": {
+    "academic": {
+      "type": "academic",
+      "label": "学业成绩",
+      "description": "修改指定科目的成绩"
+    },
+    "abilities": {
+      "type": "abilities",
+      "label": "能力属性",
+      "description": "修改能力属性（记忆力、理解力等）"
+    },
+    "status": {
+      "type": "status",
+      "label": "状态属性",
+      "description": "修改状态属性（体力、精力、压力）"
+    },
+    "special": {
+      "type": "special",
+      "label": "特殊属性",
+      "description": "修改特殊属性（孤注一掷、绝地求生等）"
+    },
+    "classmateship": {
+      "type": "classmateship",
+      "label": "同学关系",
+      "description": "修改与同学的关系值"
+    },
+    "dormmates": {
+      "type": "dormmates",
+      "label": "舍友关系",
+      "description": "修改与舍友的关系值"
+    },
+    "teachers": {
+      "type": "teachers",
+      "label": "师生关系",
+      "description": "修改与老师的关系值"
+    },
+    "clubExperience": {
+      "type": "clubExperience",
+      "label": "社团经验",
+      "description": "修改社团经验值"
+    },
+    "random": {
+      "type": "random",
+      "label": "随机效果",
+      "description": "从指定类别中随机选择一项生效"
+    }
+  },
+  "events": {
+    "random": [
+      {
+        "id": "study_late",
+        "title": "学到深夜",
+        "description": "今晚你决定多学一会儿，但是室友们都已经睡着了。台灯的光在黑暗中显得格外刺眼。",
+        "triggerConditions": {
+          "type": "status",
+          "field": "energy",
+          "operator": ">",
+          "value": 30
+        },
+        "probability": 0.15,
+        "once": false,
+        "cooldown": 7,
+        "options": [
+          {
+            "id": "continue_study",
+            "text": "继续学到困为止",
+            "effects": [
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 3
+              },
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": -2
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -30
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "id": "sleep_now",
+            "text": "收拾一下赶紧睡觉",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": 1
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "id": "play_phone",
+            "text": "躺床上玩会手机",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": -2
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -10
+              }
+            ],
+            "nextEvent": "phone_addiction"
+          }
+        ]
+      },
+      {
+        "id": "phone_addiction",
+        "title": "手机诱惑",
+        "description": "你躺在床上打开了手机，各种消息和视频让你欲罢不能。等你回过神来，已经凌晨2点了...",
+        "triggerConditions": null,
+        "probability": 0.3,
+        "once": false,
+        "options": [
+          {
+            "id": "regret_sleep",
+            "text": "后悔地赶紧睡觉",
+            "effects": [
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -40
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "id": "keep_playing",
+            "text": "反正也睡不着，不如继续玩",
+            "effects": [
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -50
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 15
+              },
+              {
+                "type": "academic",
+                "field": "math",
+                "value": -2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "classmate_help",
+        "title": "同学请教",
+        "description": "坐在你旁边的同学向你请教一道数学题。你看了眼题目，这道题对你来说很简单。",
+        "triggerConditions": {
+          "type": "academic",
+          "field": "math",
+          "operator": ">",
+          "value": 60
+        },
+        "probability": 0.1,
+        "once": false,
+        "options": [
+          {
+            "id": "explain_patiently",
+            "text": "耐心讲解",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 10
+              },
+              {
+                "type": "abilities",
+                "field": "comprehension",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "id": "brief_explanation",
+            "text": "随便说了两句",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "id": "refuse",
+            "text": "说自己在忙，让ta问老师",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": -5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "teacher_praise",
+        "title": "老师表扬",
+        "description": "课堂上，老师当着全班同学的面表扬了你，说你的作业完成得非常出色。",
+        "triggerConditions": null,
+        "probability": 0.08,
+        "once": false,
+        "options": [
+          {
+            "id": "humble",
+            "text": "谦虚地接受",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 3
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -5
+              }
+            ]
+          },
+          {
+            "id": "more_effort",
+            "text": "心里暗爽，更加努力",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": 2
+              },
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "exam_anxiety",
+        "title": "考前焦虑",
+        "description": "考试前一天晚上，你躺在床上翻来覆去睡不着。脑子里全是明天考试的内容，压力好大。",
+        "triggerConditions": {
+          "type": "phase",
+          "values": [
+            "MONTHLY_EXAM",
+            "MIDTERM",
+            "FINAL"
+          ]
+        },
+        "probability": 0.25,
+        "once": false,
+        "options": [
+          {
+            "id": "breathe",
+            "text": "深呼吸，放轻松",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 2
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -10
+              }
+            ]
+          },
+          {
+            "id": "review_more",
+            "text": "起来再复习一会",
+            "effects": [
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 2
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -20
+              }
+            ]
+          },
+          {
+            "id": "call_family",
+            "text": "给爸妈打个电话",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -15
+              }
+            ],
+            "nextEvent": "family_call"
+          }
+        ]
+      },
+      {
+        "id": "family_call",
+        "title": "家人电话",
+        "description": "电话那头，妈妈叮嘱你注意身体，不要太累。爸爸说无论考得怎样，都没关系。",
+        "triggerConditions": null,
+        "probability": 0.5,
+        "once": false,
+        "options": [
+          {
+            "id": "motivated",
+            "text": "挂了电话，更有动力了",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 3
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -20
+              }
+            ]
+          },
+          {
+            "id": "miss_home",
+            "text": "挂了电话，有点想家",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cafeteria_food",
+        "title": "食堂美食",
+        "description": "今天食堂推出了新菜品，你决定尝尝。味道居然还不错！",
+        "triggerConditions": null,
+        "probability": 0.12,
+        "once": false,
+        "options": [
+          {
+            "id": "eat_more",
+            "text": "多吃一碗饭",
+            "effects": [
+              {
+                "type": "status",
+                "field": "physical",
+                "value": 15
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "id": "share_friends",
+            "text": "拍个照发朋友圈",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sports_injury",
+        "title": "运动受伤",
+        "description": "体育课上，你不小心在跑步时扭到了脚踝。有点疼，但应该不严重。",
+        "triggerConditions": null,
+        "probability": 0.05,
+        "once": false,
+        "options": [
+          {
+            "id": "see_doctor",
+            "text": "去校医室看看",
+            "effects": [
+              {
+                "type": "status",
+                "field": "physical",
+                "value": -10
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -5
+              }
+            ]
+          },
+          {
+            "id": "bear_pain",
+            "text": "忍忍继续上课",
+            "effects": [
+              {
+                "type": "status",
+                "field": "physical",
+                "value": -20
+              },
+              {
+                "type": "academic",
+                "field": "sports",
+                "value": -2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "club_recruitment",
+        "title": "社团招新",
+        "description": "社团招新摊位在操场上摆了一排，各种社团都在招揽新成员。你被几个社团的人拦住了。",
+        "triggerConditions": {
+          "type": "club",
+          "value": null
+        },
+        "probability": 0.2,
+        "once": true,
+        "options": [
+          {
+            "id": "join_literature",
+            "text": "加入文学社",
+            "effects": [
+              {
+                "type": "club",
+                "value": "culture_literature"
+              },
+              {
+                "type": "classmateship",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "id": "join_math",
+            "text": "加入数学社",
+            "effects": [
+              {
+                "type": "club",
+                "value": "math"
+              },
+              {
+                "type": "classmateship",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "id": "join_programming",
+            "text": "加入编程社",
+            "effects": [
+              {
+                "type": "club",
+                "value": "information"
+              },
+              {
+                "type": "classmateship",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "id": "no_club",
+            "text": "暂时不加入社团",
+            "effects": []
+          }
+        ]
+      },
+      {
+        "id": "secret_crush",
+        "title": "心动的瞬间",
+        "description": "你在班上注意到了一个身影。每次看到ta，你的心跳都会不自觉地加快。",
+        "triggerConditions": {
+          "type": "flag",
+          "field": "hasCrushEvent",
+          "value": false
+        },
+        "probability": 0.1,
+        "once": true,
+        "options": [
+          {
+            "id": "watch_silent",
+            "text": "默默关注就好",
+            "effects": [
+              {
+                "type": "special",
+                "field": "romance",
+                "value": 10
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "id": "try_know",
+            "text": "找机会认识一下",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 15
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 10
+              }
+            ],
+            "nextEvent": "crush_interaction"
+          },
+          {
+            "id": "focus_study",
+            "text": "还是专注于学习吧",
+            "effects": [
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 2
+              },
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "crush_interaction",
+        "title": "初次交流",
+        "description": "你鼓起勇气和ta说了话。ta对你笑了笑，你感觉整个世界都明亮了。",
+        "triggerConditions": null,
+        "probability": 0.6,
+        "once": false,
+        "options": [
+          {
+            "id": "chat_much",
+            "text": "聊了很多，发现有很多共同话题",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 20
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -10
+              }
+            ]
+          },
+          {
+            "id": "nervous_talk",
+            "text": "简单聊了几句，有点紧张",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "id": "awkward",
+            "text": "表现得太紧张了，有点尴尬",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 5
+              },
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": -2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "timeline": {
+    "description": "2022-2025 真实事件时间线",
+    "events": [
+      {
+        "id": "military_exam",
+        "title": "入学考试",
+        "description": "军训期间，学校安排了一场入学考试，考查语数英三科。这是决定你分班的重要依据。",
+        "date": "2022-08-26",
+        "type": "exam",
+        "grade": 1,
+        "semester": 1,
+        "examType": "entry",
+        "subjects": [
+          "chinese",
+          "math",
+          "english"
+        ]
+      },
+      {
+        "id": "military_training_day1",
+        "title": "军训第一天",
+        "description": "你穿着迷彩服，站在操场上。阳光毒辣，教官的口令响亮有力。初中的第一课，从这里开始。",
+        "date": "2022-08-26",
+        "type": "activity",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "站好军姿，认真训练",
+            "effects": [
+              {
+                "type": "status",
+                "field": "physical",
+                "value": -15
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -20
+              },
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "text": "偷偷休息一下",
+            "effects": [
+              {
+                "type": "status",
+                "field": "physical",
+                "value": -5
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "summer_vacation_end",
+        "title": "暑假最后一天",
+        "description": "明天就要开学了。你躺在床上，回想起这个暑假的点点滴滴。新学期，你有什么期待吗？",
+        "date": "2022-08-31",
+        "type": "key",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "希望能交到新朋友",
+            "effects": [
+              {
+                "type": "special",
+                "field": "socialDesire",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "希望能取得好成绩",
+            "effects": [
+              {
+                "type": "academic",
+                "field": "math",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "希望能顺利度过初中三年",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "military_training_last_day",
+        "title": "军训最后一天",
+        "description": "为期一周的军训终于结束了。今天是汇报表演，你和同学们穿着整齐的军装，等待着检阅。",
+        "date": "2022-08-31",
+        "type": "activity",
+        "activityType": "military",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "好好表现，争取优秀",
+            "effects": [
+              {
+                "type": "academic",
+                "field": "sports",
+                "value": 5
+              },
+              {
+                "type": "classmateship",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "终于结束了，松了口气",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -10
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "online_class_start",
+        "title": "网课开始",
+        "description": "由于新冠疫情形势严峻，学校通知开始线上教学。你打开电脑，登录网课平台。新的学习方式开始了。",
+        "date": "2022-09-01",
+        "type": "key",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "认真听讲，做好笔记",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": 5
+              },
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 2
+              }
+            ]
+          },
+          {
+            "text": "一边听一边玩手机",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": -3
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "躺平，反正没人监督",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -5
+              },
+              {
+                "type": "academic",
+                "field": "english",
+                "value": -2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "online_class_week1",
+        "title": "网课第一周",
+        "description": "网课已经进行一周了。你渐渐习惯了这种学习方式——虽然少了和同学的互动，但也不用每天早起赶校车。",
+        "date": "2022-09-08",
+        "type": "key",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "自律学习，每天都很充实",
+            "effects": [
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 2
+              },
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "text": "网课太难了，有些跟不上",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 10
+              },
+              {
+                "type": "academic",
+                "field": "physics",
+                "value": -2
+              }
+            ]
+          },
+          {
+            "text": "摸鱼时间，作业最后再抄",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": -2
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": 15
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "online_class_week2",
+        "title": "网课第二周",
+        "description": "网课进入第二周。还有一周就能回学校了！你每天重复着起床、上课、吃饭、睡觉的循环。",
+        "date": "2022-09-12",
+        "type": "key",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "再加把劲，马上就回去了",
+            "effects": [
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 2
+              },
+              {
+                "type": "abilities",
+                "field": "memory",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "text": "坚持不住了，好想回学校",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 10
+              },
+              {
+                "type": "special",
+                "field": "romance",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "在家上网课真舒服，多来几天",
+            "effects": [
+              {
+                "type": "status",
+                "field": "energy",
+                "value": 20
+              },
+              {
+                "type": "status",
+                "field": "physical",
+                "value": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "return_school",
+        "title": "返校",
+        "description": "终于可以回学校了！你背着书包，走进熟悉的校门。同学们都变了个样——两周不见，甚是想念。",
+        "date": "2022-09-16",
+        "type": "key",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "和同学们热情打招呼",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 15
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -10
+              }
+            ]
+          },
+          {
+            "text": "默默回到座位，整理书包",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "text": "和好朋友们聊聊网课期间的趣事",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 10
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -15
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "first_day_school",
+        "title": "开学第一天",
+        "description": "你背着新书包，踏进了初中的校门。一切都是那么新鲜，你的心跳既兴奋又紧张。",
+        "date": "2022-10-01",
+        "type": "key",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "四处逛逛，熟悉环境",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "直接去教室坐好",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "national_day",
+        "title": "国庆节",
+        "description": "七天长假！你终于可以好好休息一下了。",
+        "date": "2022-10-01",
+        "type": "holiday",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "写作业",
+            "effects": [
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 2
+              }
+            ]
+          },
+          {
+            "text": "出去玩",
+            "effects": [
+              {
+                "type": "status",
+                "field": "physical",
+                "value": 20
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "text": "在家躺平",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -20
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "military_training",
+        "title": "军训开始",
+        "description": "为期一周的军训开始了。教官站在队伍前面，表情严肃。",
+        "date": "2022-10-02",
+        "type": "key",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "认真训练",
+            "effects": [
+              {
+                "type": "status",
+                "field": "physical",
+                "value": -20
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -30
+              },
+              {
+                "type": "academic",
+                "field": "sports",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "偷偷懒",
+            "effects": [
+              {
+                "type": "status",
+                "field": "physical",
+                "value": -10
+              },
+              {
+                "type": "status",
+                "field": "energy",
+                "value": -15
+              },
+              {
+                "type": "academic",
+                "field": "sports",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "official_class",
+        "title": "正式分班",
+        "description": "根据入学考试成绩，你被分到了{className}。班主任站在讲台上，等待着你们入座。",
+        "date": "2022-10-09",
+        "type": "key",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "新的开始，我要更加努力",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "有点失望，但接受现实",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "还不错，这个班氛围应该挺好",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "first_monthly_exam",
+        "title": "第一次月考",
+        "description": "返校后的第一次正式考试。经历了一个月的网课，你的学习效果如何？考场里弥漫着紧张的气氛。",
+        "date": "2022-10-15",
+        "type": "exam",
+        "examType": "monthly",
+        "grade": 1,
+        "semester": 1,
+        "subjects": [
+          "chinese",
+          "math",
+          "english"
+        ]
+      },
+      {
+        "id": "first_midterm",
+        "title": "期中考试",
+        "description": "学期中间的考试，检验你这两个月的学习成果。",
+        "date": "2022-11-07",
+        "type": "exam",
+        "examType": "midterm",
+        "grade": 1,
+        "semester": 1,
+        "subjects": [
+          "chinese",
+          "math",
+          "english",
+          "politics",
+          "history"
+        ]
+      },
+      {
+        "id": "first_final",
+        "title": "期末考试",
+        "description": "初一年级上学期期末考试，也是你在初中的第一次期末考试。",
+        "date": "2023-01-09",
+        "type": "exam",
+        "examType": "final",
+        "grade": 1,
+        "semester": 1,
+        "subjects": [
+          "chinese",
+          "math",
+          "english",
+          "politics",
+          "history"
+        ]
+      },
+      {
+        "id": "winter_vacation",
+        "title": "寒假",
+        "description": "期末考试结束，寒假来了。过年期间要记得学习哦！",
+        "date": "2023-01-15",
+        "type": "holiday",
+        "grade": 1,
+        "semester": 1,
+        "options": [
+          {
+            "text": "好好过年",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -30
+              }
+            ]
+          },
+          {
+            "text": "制定学习计划",
+            "effects": [
+              {
+                "type": "academic",
+                "subjects": [
+                  "chinese",
+                  "math",
+                  "english"
+                ],
+                "mode": "random",
+                "min": 1,
+                "max": 2
+              },
+              {
+                "type": "abilities",
+                "field": "focus",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "second_semester_start",
+        "title": "新学期开始",
+        "description": "新的学期开始了，你又长大了一岁。初二了，课程里多了物理这一科。",
+        "date": "2023-02-13",
+        "type": "key",
+        "grade": 1,
+        "semester": 2,
+        "options": [
+          {
+            "text": "新学期，新目标！",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "text": "物理好像挺难的",
+            "effects": [
+              {
+                "type": "academic",
+                "field": "physics",
+                "value": 0
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "second_midterm",
+        "title": "生地会考报名",
+        "description": "生物地理会考开始报名了，这是你参加的第一场会考。",
+        "date": "2023-03-01",
+        "type": "key",
+        "grade": 2,
+        "semester": 2
+      },
+      {
+        "id": "sports_meet_2023",
+        "title": "春季运动会",
+        "description": "一年一度的春季运动会开始了！",
+        "date": "2023-04-17",
+        "type": "activity",
+        "activityType": "sports",
+        "grade": 1,
+        "semester": 2
+      },
+      {
+        "id": "arts_festival_2023",
+        "title": "校园艺术节",
+        "description": "校园艺术节开始了！有节目表演、美术作品展等多种活动。",
+        "date": "2023-05-15",
+        "type": "activity",
+        "activityType": "arts",
+        "grade": 1,
+        "semester": 2
+      },
+      {
+        "id": "biology_geography_exam",
+        "title": "生地会考",
+        "description": "今天是你的第一场会考——生物地理。考完这一场，这两科就正式从你的课程表里消失了。",
+        "date": "2023-06-26",
+        "type": "exam",
+        "examType": "biology_geography",
+        "grade": 1,
+        "semester": 2,
+        "subjects": [
+          "biology",
+          "geography"
+        ]
+      },
+      {
+        "id": "summer_2023",
+        "title": "初二暑假",
+        "description": "初二的暑假，也是最后一个轻松一点的暑假。",
+        "date": "2023-07-10",
+        "type": "holiday",
+        "grade": 1,
+        "semester": 2
+      },
+      {
+        "id": "third_grade_start",
+        "title": "初三，开始",
+        "description": "你正式成为了一名初三学生。初三是冲刺的一年，也是决定你命运的一年。",
+        "date": "2023-09-01",
+        "type": "key",
+        "grade": 3,
+        "semester": 1,
+        "options": [
+          {
+            "text": "中考，我来了！",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 10
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 15
+              }
+            ]
+          },
+          {
+            "text": "有点紧张",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 20
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "high_school_signing",
+        "title": "龙高签约机会",
+        "description": "学校传来好消息：龙城高级中学来校进行签约。只要你的成绩足够优秀，就可以提前签约，锁定录取名额！",
+        "date": "2023-10-15",
+        "type": "key",
+        "grade": 3,
+        "semester": 1,
+        "options": [
+          {
+            "text": "我要签约！",
+            "effects:": [
+              {
+                "type": "special",
+                "field": "highSchoolSigned",
+                "value": true
+              }
+            ],
+            "nextPhase": "signing_check"
+          },
+          {
+            "text": "再考虑一下",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "text": "先不签，冲更好的学校",
+            "effects": [
+              {
+                "type": "abilities",
+                "field": "mindset",
+                "value": 5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "winter_vacation_2023",
+        "title": "初三寒假",
+        "description": "这是你最后一个初中寒假，也是最关键的一个假期。",
+        "date": "2024-01-22",
+        "type": "holiday",
+        "grade": 3,
+        "semester": 1
+      },
+      {
+        "id": "final_midterm",
+        "title": "初三下学期开学",
+        "description": "最后的学期开始了，距离中考只有几个月的时间。",
+        "date": "2024-02-26",
+        "type": "key",
+        "grade": 3,
+        "semester": 2
+      },
+      {
+        "id": "sports_meet_2024",
+        "title": "体育中考",
+        "description": "体育中考，你的体育成绩将直接影响最终总分。",
+        "date": "2024-04-15",
+        "type": "exam",
+        "examType": "sports",
+        "grade": 3,
+        "semester": 2,
+        "subjects": [
+          "sports"
+        ]
+      },
+      {
+        "id": "mock_exam_1",
+        "title": "一模考试",
+        "description": "第一次模拟考试，是对中考前复习效果的一次重要检验。",
+        "date": "2024-04-22",
+        "type": "exam",
+        "examType": "mock",
+        "grade": 3,
+        "semester": 2,
+        "subjects": [
+          "chinese",
+          "math",
+          "english",
+          "politics",
+          "history",
+          "physics",
+          "chemistry"
+        ]
+      },
+      {
+        "id": "mock_exam_2",
+        "title": "二模考试",
+        "description": "第二次模拟考试，距离中考更近了。",
+        "date": "2024-05-20",
+        "type": "exam",
+        "examType": "mock",
+        "grade": 3,
+        "semester": 2,
+        "subjects": [
+          "chinese",
+          "math",
+          "english",
+          "politics",
+          "history",
+          "physics",
+          "chemistry"
+        ]
+      },
+      {
+        "id": "third_mock",
+        "title": "三模考试",
+        "description": "第三次模拟考试，也是中考前的最后一次模拟。",
+        "date": "2024-06-03",
+        "type": "exam",
+        "examType": "mock",
+        "grade": 3,
+        "semester": 2,
+        "subjects": [
+          "chinese",
+          "math",
+          "english",
+          "politics",
+          "history",
+          "physics",
+          "chemistry"
+        ]
+      },
+      {
+        "id": "middle_exam",
+        "title": "中考",
+        "description": "三年磨一剑，今朝试锋芒。今天是中考的第一天，也是你初中生涯最重要的一天。",
+        "date": "2024-06-20",
+        "type": "exam",
+        "examType": "middle",
+        "grade": 3,
+        "semester": 2,
+        "subjects": [
+          "chinese",
+          "math",
+          "english",
+          "politics",
+          "history",
+          "physics",
+          "chemistry",
+          "sports"
+        ]
+      },
+      {
+        "id": "middle_exam_end",
+        "title": "中考结束",
+        "description": "考试结束了！不管结果如何，你的初中三年已经画上了句号。",
+        "date": "2024-06-23",
+        "type": "key",
+        "grade": 3,
+        "semester": 2,
+        "options": [
+          {
+            "text": "终于结束了！",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -50
+              }
+            ]
+          },
+          {
+            "text": "等成绩的这几天好煎熬",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": 20
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "middle_exam_result",
+        "title": "成绩公布",
+        "description": "今天中考成绩公布了。你的总分为{score}分。",
+        "date": "2024-07-10",
+        "type": "key",
+        "grade": 3,
+        "semester": 2
+      },
+      {
+        "id": "admission_result",
+        "title": "录取结果",
+        "description": "你被{highSchool}录取了！",
+        "date": "2024-07-15",
+        "type": "key",
+        "grade": 3,
+        "semester": 2
+      },
+      {
+        "id": "graduation_ceremony",
+        "title": "毕业典礼",
+        "description": "你穿着毕业服，站在熟悉的校园里。三年的时光，如白驹过隙。今天，是告别的日子。",
+        "date": "2024-07-20",
+        "type": "key",
+        "grade": 3,
+        "semester": 2,
+        "options": [
+          {
+            "text": "和同学们合影留念",
+            "effects": [
+              {
+                "type": "classmateship",
+                "value": 30
+              },
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -20
+              }
+            ]
+          },
+          {
+            "text": "感谢老师的教导",
+            "effects": [
+              {
+                "type": "teachers",
+                "value": 20
+              }
+            ]
+          },
+          {
+            "text": "默默告别",
+            "effects": [
+              {
+                "type": "status",
+                "field": "stress",
+                "value": -30
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "highSchools": {
+    "description": "2025年深圳中考各高中录取分数线",
+    "data": [
+      {
+        "name": "深圳中学",
+        "type": "公办",
+        "admissionScore": 574,
+        "typeScore": 8,
+        "features": [
+          "深圳第一",
+          "竞赛强校",
+          "百年名校"
+        ],
+        "description": "深圳市最好的中学，竞赛和高考成绩均名列前茅"
+      },
+      {
+        "name": "深圳外国语学校",
+        "type": "公办",
+        "admissionScore": 572,
+        "typeScore": 8,
+        "features": [
+          "外语特色",
+          "国际视野",
+          "文理兼优"
+        ],
+        "description": "以外语为特色的重点中学，注重国际化培养"
+      },
+      {
+        "name": "深圳实验学校",
+        "type": "公办",
+        "admissionScore": 571,
+        "typeScore": 8,
+        "features": [
+          "实验创新",
+          "全面培养",
+          "科技创新"
+        ],
+        "description": "注重实验教学和创新人才培养"
+      },
+      {
+        "name": "深圳高级中学",
+        "type": "公办",
+        "admissionScore": 568,
+        "typeScore": 8,
+        "features": [
+          "龙城高级中学",
+          "重点高中",
+          "优质资源"
+        ],
+        "description": "龙城地区最好的高中，教学质量优秀"
+      },
+      {
+        "name": "红岭中学",
+        "type": "公办",
+        "admissionScore": 565,
+        "typeScore": 8,
+        "features": [
+          "老牌名校",
+          "校风优良",
+          "加工能力强"
+        ],
+        "description": "深圳老牌名校，加工能力突出"
+      },
+      {
+        "name": "育才中学",
+        "type": "公办",
+        "admissionScore": 562,
+        "typeScore": 8,
+        "features": [
+          "蛇口名校",
+          "环境优美",
+          "师资雄厚"
+        ],
+        "description": "蛇口地区重点中学，校园环境优美"
+      },
+      {
+        "name": "翠园中学",
+        "type": "公办",
+        "admissionScore": 558,
+        "typeScore": 8,
+        "features": [
+          "罗湖名校",
+          "历史悠久",
+          "校风严谨"
+        ],
+        "description": "罗湖区重点中学，历史悠久"
+      },
+      {
+        "name": "宝安中学",
+        "type": "公办",
+        "admissionScore": 556,
+        "typeScore": 8,
+        "features": [
+          "宝安龙头",
+          "规模宏大",
+          "设施先进"
+        ],
+        "description": "宝安区龙头中学，设施先进"
+      },
+      {
+        "name": "深圳科学高中",
+        "type": "公办",
+        "admissionScore": 552,
+        "typeScore": 8,
+        "features": [
+          "科学特色",
+          "创新培养",
+          "竞赛传统"
+        ],
+        "description": "以科学为特色的创新型高中"
+      },
+      {
+        "name": "龙城高级中学",
+        "type": "公办",
+        "admissionScore": 548,
+        "typeScore": 8,
+        "features": [
+          "龙岗名校",
+          "管理规范",
+          "升学率高"
+        ],
+        "description": "龙岗区重点中学，管理规范，升学率高"
+      },
+      {
+        "name": "龙岗外国语学校",
+        "type": "公办",
+        "admissionScore": 545,
+        "typeScore": 8,
+        "features": [
+          "外语特色",
+          "国际课程",
+          "小班教学"
+        ],
+        "description": "龙岗区外语特色学校，小班教学"
+      },
+      {
+        "name": "平冈中学",
+        "type": "公办",
+        "admissionScore": 542,
+        "typeScore": 8,
+        "features": [
+          "龙岗优质",
+          "特色办学",
+          "全面育人"
+        ],
+        "description": "龙岗区优质高中，特色办学"
+      },
+      {
+        "name": "华中师范大学龙岗附属中学",
+        "type": "公办",
+        "admissionScore": 538,
+        "typeScore": 8,
+        "features": [
+          "华师系",
+          "合作办学",
+          "资源丰富"
+        ],
+        "description": "华师系合作办学，资源共享"
+      },
+      {
+        "name": "布吉中学",
+        "type": "公办",
+        "admissionScore": 535,
+        "typeScore": 8,
+        "features": [
+          "布吉重点",
+          "校风优良",
+          "进步明显"
+        ],
+        "description": "布吉地区重点中学，进步明显"
+      },
+      {
+        "name": "横岗高级中学",
+        "type": "公办",
+        "admissionScore": 528,
+        "typeScore": 8,
+        "features": [
+          "横岗优质",
+          "艺术特色",
+          "多元发展"
+        ],
+        "description": "横岗地区优质高中，艺术特色突出"
+      }
+    ]
+  },
+  "examMechanics": {
+    "description": "考试机制配置",
+    "scoreCalculation": {
+      "baseScore": 100,
+      "difficulty": {
+        "easy": 0.8,
+        "normal": 1,
+        "hard": 1.2,
+        "nightmare": 1.5
+      },
+      "bonus": {
+        "highMindset": {
+          "threshold": 80,
+          "bonus": 5
+        },
+        "lowStress": {
+          "threshold": 30,
+          "bonus": 5
+        },
+        "specialAbility": {
+          "name": "lastStand",
+          "bonus": 10
+        }
+      }
+    },
+    "timeLimit": {
+      "monthly": 90,
+      "midterm": 120,
+      "final": 120,
+      "mock": 120,
+      "middle": 120
+    },
+    "scoreWeight": {
+      "monthly": 0.1,
+      "midterm": 0.15,
+      "final": 0.2,
+      "mock": 0.1,
+      "middle": 0.5
+    },
+    "cancelConditions": {
+      "weather": [
+        "yellow_rainstorm",
+        "red_rainstorm",
+        "yellow_typhoon",
+        "red_typhoon"
+      ],
+      "holiday": true
+    }
+  },
+  "achievements": [
+    {
+      "id": "perfect_score",
+      "name": "满分传奇",
+      "description": "单科满分",
+      "condition": {
+        "type": "academic",
+        "field": "any",
+        "operator": "=",
+        "value": 100
+      },
+      "icon": "🏆",
+      "rarity": "rare"
+    },
+    {
+      "id": "top_student",
+      "name": "年级第一",
+      "description": "考试排名年级第一",
+      "condition": {
+        "type": "rank",
+        "operator": "=",
+        "value": 1
+      },
+      "icon": "👑",
+      "rarity": "epic"
+    },
+    {
+      "id": "all_passed",
+      "name": "全部及格",
+      "description": "所有科目都及格",
+      "condition": {
+        "type": "academic",
+        "field": "all",
+        "operator": ">=",
+        "value": 60
+      },
+      "icon": "✅",
+      "rarity": "common"
+    },
+    {
+      "id": "sports_full",
+      "name": "体育满分",
+      "description": "体育获得满分",
+      "condition": {
+        "type": "academic",
+        "field": "sports",
+        "operator": "=",
+        "value": 50
+      },
+      "icon": "🏃",
+      "rarity": "rare"
+    },
+    {
+      "id": "club_president",
+      "name": "社团社长",
+      "description": "成为社团社长",
+      "condition": {
+        "type": "club",
+        "field": "role",
+        "operator": "=",
+        "value": "president"
+      },
+      "icon": "🎨",
+      "rarity": "rare"
+    },
+    {
+      "id": "popular",
+      "name": "人气王",
+      "description": "人缘最好",
+      "condition": {
+        "type": "social",
+        "field": "maxFriendliness",
+        "operator": ">=",
+        "value": 80
+      },
+      "icon": "⭐",
+      "rarity": "rare"
+    },
+    {
+      "id": "high_school_sign",
+      "name": "签约成功",
+      "description": "签约龙城高级中学",
+      "condition": {
+        "type": "special",
+        "field": "highSchoolSigned",
+        "operator": "=",
+        "value": true
+      },
+      "icon": "📝",
+      "rarity": "rare"
+    },
+    {
+      "id": "no_stress",
+      "name": "轻松应对",
+      "description": "整个学期压力值保持在30以下",
+      "condition": {
+        "type": "status",
+        "field": "maxStress",
+        "operator": "<",
+        "value": 30
+      },
+      "icon": "😌",
+      "rarity": "rare"
+    },
+    {
+      "id": "study_hard",
+      "name": "勤奋好学",
+      "description": "累计学习500次",
+      "condition": {
+        "type": "stat",
+        "field": "studyCount",
+        "operator": ">=",
+        "value": 500
+      },
+      "icon": "📚",
+      "rarity": "common"
+    },
+    {
+      "id": "survive",
+      "name": "极限生存",
+      "description": "压力值满值后存活",
+      "condition": {
+        "type": "status",
+        "field": "stress",
+        "operator": "=",
+        "value": 100
+      },
+      "icon": "🔥",
+      "rarity": "rare"
+    },
+    {
+      "id": "love_story",
+      "name": "青春记忆",
+      "description": "触发暗恋事件",
+      "condition": {
+        "type": "flag",
+        "field": "hasCrushEvent",
+        "operator": "=",
+        "value": true
+      },
+      "icon": "💕",
+      "rarity": "common"
+    },
+    {
+      "id": "top_school",
+      "name": "名校录取",
+      "description": "考入深圳中学或深圳外国语学校",
+      "condition": {
+        "type": "school",
+        "field": "name",
+        "operator": "in",
+        "value": [
+          "深圳中学",
+          "深圳外国语学校"
+        ]
+      },
+      "icon": "🎓",
+      "rarity": "epic"
+    },
+    {
+      "id": "graduate",
+      "name": "顺利毕业",
+      "description": "完成初中三年",
+      "condition": {
+        "type": "phase",
+        "field": "current",
+        "operator": "=",
+        "value": "GRADUATION"
+      },
+      "icon": "🎉",
+      "rarity": "common"
+    }
+  ],
+  "endings": [
+    {
+      "id": "perfect",
+      "name": "完美结局",
+      "description": "考入理想高中，收获美好回忆",
+      "condition": {
+        "type": "score",
+        "field": "percentage",
+        "operator": ">=",
+        "value": 0.9
+      },
+      "icon": "🌟",
+      "unlockSchool": "深圳中学"
+    },
+    {
+      "id": "good",
+      "name": "良好结局",
+      "description": "考入不错的高中",
+      "condition": {
+        "type": "score",
+        "field": "percentage",
+        "operator": ">=",
+        "value": 0.75
+      },
+      "icon": "😊"
+    },
+    {
+      "id": "normal",
+      "name": "普通结局",
+      "description": "顺利毕业",
+      "condition": {
+        "type": "score",
+        "field": "percentage",
+        "operator": ">=",
+        "value": 0.6
+      },
+      "icon": "🙂"
+    },
+    {
+      "id": "bad",
+      "name": "遗憾结局",
+      "description": "未能考上理想学校",
+      "condition": {
+        "type": "score",
+        "field": "percentage",
+        "operator": ">=",
+        "value": 0.5
+      },
+      "icon": "😔"
+    },
+    {
+      "id": "fail",
+      "name": "失败结局",
+      "description": "未能考上高中",
+      "condition": {
+        "type": "score",
+        "field": "percentage",
+        "operator": "<",
+        "value": 0.5
+      },
+      "icon": "💔"
+    }
+  ],
+  "clubs": {
+    "culture": {
+      "name": "文化类",
+      "clubs": [
+        "文学社",
+        "辩论社",
+        "历史社",
+        "哲学社",
+        "日语社"
+      ]
+    },
+    "math": {
+      "name": "数学类",
+      "clubs": [
+        "数学社",
+        "数独社",
+        "逻辑推理社"
+      ]
+    },
+    "information": {
+      "name": "信息类",
+      "clubs": [
+        "编程社",
+        "机器人社",
+        "电子制作社"
+      ]
+    },
+    "art": {
+      "name": "美术类",
+      "clubs": [
+        "美术社",
+        "漫画社",
+        "书法社",
+        "摄影社"
+      ]
+    },
+    "music": {
+      "name": "音乐类",
+      "clubs": [
+        "合唱团",
+        "器乐社",
+        "舞蹈社",
+        "街舞社"
+      ]
+    },
+    "sports": {
+      "name": "体育类",
+      "clubs": [
+        "篮球社",
+        "足球社",
+        "羽毛球社",
+        "乒乓球社",
+        "田径社"
+      ]
+    }
+  },
+  "messages": {
+    "welcome": "欢迎来到龙高北重开模拟器！",
+    "firstDay": "这是你初中生活的第一天...",
+    "saved": "游戏已保存",
+    "saveFailed": "保存失败",
+    "energyLow": "精力不足，学习效率降低",
+    "studySuccess": "学习完成",
+    "restSuccess": "休息完成",
+    "signSuccess": "恭喜你成功签约龙城高级中学！",
+    "signFail": "很遗憾，你的成绩未达到签约标准",
+    "admissionSuccess": "恭喜你被录取了！",
+    "admissionFail": "很遗憾，未能达到录取分数线"
+  }
+}

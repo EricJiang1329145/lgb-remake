@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略翻格子游戏</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>策略翻格子游戏 
+                <span id="help-icon" class="help-icon" title="游戏提示">?</span>
+            </h1>
+            <div class="game-info">
+                <div class="info-item">
+                    <span>剩余点击次数:</span>
+                    <span id="clicks-left">33</span>
+                </div>
+                <div class="info-item">
+                    <span>剩余时间:</span>
+                    <span id="time-left">240</span>
+                </div>
+                <div class="info-item">
+                    <span>当前得分:</span>
+                    <span id="current-score">0.00</span>
+                </div>
+                <div class="info-item">
+                    <span>目标分数:</span>
+                    <span id="target-score">70+</span>
+                </div>
+                <div class="info-item">
+                    <span>已翻开格子:</span>
+                    <span id="flipped-count">0</span>/49
+                </div>
+            </div>
+        </header>
+        
+        <div id="help-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close" id="close-help">&times;</span>
+                <h2>游戏提示</h2>
+                <h3>游戏目标</h3>
+                <p>在33次点击限制和240秒时间内，通过策略性点击格子获得最高分数。</p>
+                
+                <h3>格子状态说明</h3>
+                <ul>
+                    <li><strong>AC (Accepted)</strong>: 代价降为0或以下时变为AC状态，获得满分(2分或4分)</li>
+                    <li><strong>WA (Wrong Answer)</strong>: 代价大于原代价的一半时保持WA状态，不得分</li>
+                    <li><strong>NEC (Need Extra Care)</strong>: 代价大于0但小于等于原代价的一半时变为NEC状态，获得部分分数(2/3到1/3之间的随机值)</li>
+                </ul>
+                
+                <h3>游戏机制</h3>
+                <ul>
+                    <li>点击格子可减少其代价值，中心格子减少2点代价</li>
+                    <li>每次点击会随机影响2-4个周围格子（包括对角线方向），相邻格子减少1点代价</li>
+                    <li>连锁反应会有0.1秒的延迟，使策略规划更容易</li>
+                    <li>特殊格子（4分）随机出现，优先处理高分格子可获得更高分数</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="game-board">
+            <div id="grid" class="grid"></div>
+        </div>
+
+        <div class="controls">
+            <button id="reset-btn" class="btn gray">重新开始</button>
+            <button id="auto-solve-btn" class="btn blue">自动答题</button>
+            <button id="submit-btn" class="btn green">交卷</button>
+        </div>
+
+        <div class="instructions">
+            <h3>游戏说明</h3>
+            <ul>
+                <li>点击格子可减少其代价值，代价值降为0或以下时格子变为AC状态并获得分数</li>
+                <li>每次点击不仅减少当前格子的代价，还会随机影响2-4个周围格子（包括对角线方向）的代价</li>
+                <li>特殊格子（4分）随机出现，优先处理高分格子可获得更高分数</li>
+                <li>WA状态得0分，NEC状态获得部分分数，AC状态获得满分</li>
+                <li>仅有33次点击机会，合理规划点击顺序，利用随机连锁影响机制最大化得分</li>
+            </ul>
+        </div>
+
+        <div id="game-over" class="game-over hidden">
+            <h2>游戏结束</h2>
+            <p>最终得分: <span id="final-score">0.00</span></p>
+            <p id="game-over-message"></p>
+            <p id="performance-message"></p>
+            <div class="game-over-controls">
+                <button id="game-over-close-btn" class="btn green">重新开始</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

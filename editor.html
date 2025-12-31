@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>龙高北重开模拟器 - 高级内容编辑器</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .header h1 {
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary { background-color: #4a90e2; color: white; }
+    .btn-success { background-color: #28a745; color: white; }
+    .btn-warning { background-color: #ffc107; color: #333; }
+    .btn-danger { background-color: #dc3545; color: white; }
+    .btn-info { background-color: #17a2b8; color: white; }
+    .btn-secondary { background-color: #6c757d; color: white; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    .main-container {
+      display: flex;
+      min-height: calc(100vh - 60px);
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: white;
+      border-right: 1px solid #e0e0e0;
+      padding: 15px 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      padding: 0 15px 10px;
+      font-size: 12px;
+      color: #666;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 3px solid transparent;
+      font-size: 14px;
+    }
+
+    .nav-item:hover { background-color: #f5f5f5; }
+    .nav-item.active { background-color: #e3f2fd; border-left-color: #4a90e2; color: #1a237e; font-weight: 500; }
+    .nav-icon { font-size: 16px; }
+
+    .content-area {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-title {
+      font-size: 18px;
+      color: #1a237e;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #4a90e2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .edit-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .edit-card-title {
+      font-size: 15px;
+      color: #1a237e;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 2px 6px;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 10px;
+      font-weight: normal;
+    }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 500;
+      color: #555;
+      font-size: 12px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="date"],
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74,144,226,0.2);
+    }
+
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .form-row-2 { grid-template-columns: 1fr 1fr; }
+
+    .array-item {
+      background-color: #f8f9fa;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      border-left: 3px solid #4a90e2;
+    }
+
+    .array-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .array-item-title { font-weight: 500; color: #333; font-size: 14px; }
+
+    .status-bar {
+      background-color: #333;
+      color: white;
+      padding: 8px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .status-indicator { display: flex; align-items: center; gap: 6px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: #4caf50; }
+    .status-dot.unsaved { background-color: #ff9800; }
+
+    .search-box {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background-color: white;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 600px;
+      width: 95%;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-title { font-size: 16px; color: #1a237e; margin-bottom: 15px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background-color: #333;
+      color: white;
+      border-radius: 8px;
+      z-index: 1001;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background-color: #28a745; }
+    .toast.warning { background-color: #ffc107; color: #333; }
+    .toast.error { background-color: #dc3545; }
+
+    .effect-builder {
+      background-color: #f0f4f8;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .effect-item {
+      background-color: white;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .effect-type-select {
+      width: 120px;
+      flex-shrink: 0;
+    }
+
+    .effect-field-select {
+      width: 120px;
+    }
+
+    .effect-value-input {
+      width: 80px;
+    }
+
+    .effect-remove {
+      margin-left: auto;
+      color: #dc3545;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .timeline-preview {
+      background-color: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .timeline-preview h4 {
+      color: #2e7d32;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .timeline-event-item {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      background-color: white;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .timeline-event-date {
+      background-color: #4a90e2;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+
+    .timeline-event-countdown {
+      margin-left: auto;
+      color: #ff9800;
+      font-weight: 500;
+    }
+
+    .highschool-card {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .highschool-score {
+      background-color: #4a90e2;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-right: 12px;
+    }
+
+    .highschool-info { flex: 1; }
+    .highschool-name { font-weight: 500; color: #333; }
+    .highschool-features { font-size: 12px; color: #666; margin-top: 2px; }
+
+    .exam-config-card {
+      background-color: #fff3e0;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 4px solid #ff9800;
+    }
+
+    .exam-config-card h4 {
+      color: #e65100;
+      margin-bottom: 10px;
+    }
+
+    .condition-builder {
+      background-color: #fce4ec;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .condition-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #e0e0e0;
+      margin-bottom: 15px;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+
+    .tab:hover { background-color: #f5f5f5; }
+    .tab.active {
+      border-bottom-color: #4a90e2;
+      color: #1a237e;
+      font-weight: 500;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .filter-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .filter-tag {
+      padding: 4px 10px;
+      background-color: #e3f2fd;
+      border-radius: 15px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-tag:hover, .filter-tag.active {
+      background-color: #4a90e2;
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon { font-size: 48px; margin-bottom: 10px; }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <h1>📝 龙高北重开模拟器 - 高级内容编辑器</h1>
+  <div class="header-actions">
+    <button class="btn btn-info" onclick="showBackups()">备份管理</button>
+    <button class="btn btn-secondary" onclick="importConfig()">导入配置</button>
+    <button class="btn btn-warning" onclick="resetToDefault()">重置默认</button>
+    <button class="btn btn-primary" onclick="exportConfig()">导出JSON</button>
+    <button class="btn btn-success" onclick="saveConfig()">保存并应用</button>
+  </div>
+  </header>
+
+  <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+
+  <div class="main-container">
+    <nav class="sidebar">
+      <div class="sidebar-title">内容管理</div>
+      <div class="nav-item active" onclick="showSection('basic')">
+        <span class="nav-icon">🎮</span><span>基础设置</span>
+      </div>
+      <div class="nav-item" onclick="showSection('randomEvents')">
+        <span class="nav-icon">🎲</span><span>随机事件</span>
+      </div>
+      <div class="nav-item" onclick="showSection('timeline')">
+        <span class="nav-icon">📅</span><span>时间线事件</span>
+      </div>
+      <div class="nav-item" onclick="showSection('achievements')">
+        <span class="nav-icon">🏆</span><span>成就系统</span>
+      </div>
+      <div class="nav-item" onclick="showSection('endings')">
+        <span class="nav-icon">🎓</span><span>结局设置</span>
+      </div>
+      <div class="nav-item" onclick="showSection('highschools')">
+        <span class="nav-icon">🏫</span><span>高中分数线</span>
+      </div>
+      <div class="nav-item" onclick="showSection('examConfig')">
+        <span class="nav-icon">📝</span><span>考试机制</span>
+      </div>
+      <div class="nav-item" onclick="showSection('effects')">
+        <span class="nav-icon">⚡</span><span>效果类型</span>
+      </div>
+      <div class="nav-item" onclick="showSection('quotes')">
+        <span class="nav-icon">💬</span><span>语录管理</span>
+      </div>
+      <div class="sidebar-title" style="margin-top: 15px;">工具</div>
+      <div class="nav-item" onclick="showSection('preview')">
+        <span class="nav-icon">👁️</span><span>事件预告预览</span>
+      </div>
+    </nav>
+
+    <main class="content-area">
+      <section id="section-basic" class="section active">
+        <h2 class="section-title">🎮 基础游戏设置</h2>
+        <div class="edit-card">
+          <div class="edit-card-title">游戏信息</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>游戏标题</label>
+              <input type="text" id="game-title" onchange="updateGameInfo('title', this.value)">
+            </div>
+            <div class="form-group">
+              <label>游戏副标题</label>
+              <input type="text" id="game-subtitle" onchange="updateGameInfo('subtitle', this.value)">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>学校名称</label>
+              <input type="text" id="school-name" onchange="updateGameInfo('schoolName', this.value)">
+            </div>
+            <div class="form-group">
+              <label>高中名称</label>
+              <input type="text" id="highschool-name" onchange="updateGameInfo('highSchoolName', this.value)">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>开始年份</label>
+              <input type="number" id="start-year" onchange="updateGameInfo('startYear', parseInt(this.value))">
+            </div>
+            <div class="form-group">
+              <label>结束年份</label>
+              <input type="number" id="end-year" onchange="updateGameInfo('endYear', parseInt(this.value))">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-randomEvents" class="section">
+        <h2 class="section-title">
+          🎲 随机事件管理
+          <button class="btn btn-success btn-sm" onclick="openEventModal()">+ 添加事件</button>
+        </h2>
+        <div class="search-box">
+          <input type="text" id="event-search" placeholder="搜索事件ID或标题..." oninput="filterEvents()">
+        </div>
+        <div class="filter-tags" id="event-filters">
+          <span class="filter-tag active" data-filter="all" onclick="filterEventsByTag('all')">全部</span>
+          <span class="filter-tag" data-filter="academic" onclick="filterEventsByTag('academic')">学业</span>
+          <span class="filter-tag" data-filter="social" onclick="filterEventsByTag('social')">社交</span>
+          <span class="filter-tag" data-filter="status" onclick="filterEventsByTag('status')">状态</span>
+        </div>
+        <div id="events-list"></div>
+      </section>
+
+      <section id="section-timeline" class="section">
+        <h2 class="section-title">
+          📅 时间线事件管理
+          <button class="btn btn-success btn-sm" onclick="openTimelineModal()">+ 添加事件</button>
+        </h2>
+        <div class="timeline-preview">
+          <h4>📌 即将到来的事件（预告系统预览）</h4>
+          <div id="timeline-preview-list"></div>
+        </div>
+        <div class="search-box">
+          <input type="text" id="timeline-search" placeholder="搜索时间线事件..." oninput="filterTimelineEvents()">
+        </div>
+        <div class="filter-tags" id="timeline-filters">
+          <span class="filter-tag active" data-filter="all" onclick="filterTimelineByTag('all')">全部</span>
+          <span class="filter-tag" data-filter="key" onclick="filterTimelineByTag('key')">关键事件</span>
+          <span class="filter-tag" data-filter="exam" onclick="filterTimelineByTag('exam')">考试</span>
+          <span class="filter-tag" data-filter="holiday" onclick="filterTimelineByTag('holiday')">假期</span>
+          <span class="filter-tag" data-filter="activity" onclick="filterTimelineByTag('activity')">活动</span>
+        </div>
+        <div id="timeline-list"></div>
+      </section>
+
+      <section id="section-achievements" class="section">
+        <h2 class="section-title">
+          🏆 成就系统管理
+          <button class="btn btn-success btn-sm" onclick="openAchievementModal()">+ 添加成就</button>
+        </h2>
+        <div id="achievements-list"></div>
+      </section>
+
+      <section id="section-endings" class="section">
+        <h2 class="section-title">
+          🎓 结局设置管理
+          <button class="btn btn-success btn-sm" onclick="openEndingModal()">+ 添加结局</button>
+        </h2>
+        <div id="endings-list"></div>
+      </section>
+
+      <section id="section-highschools" class="section">
+        <h2 class="section-title">
+          🏫 深圳高中分数线管理
+          <button class="btn btn-success btn-sm" onclick="openHighschoolModal()">+ 添加学校</button>
+        </h2>
+        <div class="search-box">
+          <input type="text" id="highschool-search" placeholder="搜索学校..." oninput="filterHighschools()">
+        </div>
+        <div id="highschools-list"></div>
+      </section>
+
+      <section id="section-examConfig" class="section">
+        <h2 class="section-title">📝 考试机制配置</h2>
+        <div class="exam-config-card">
+          <h4>📊 分数计算配置</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>基础分数</label>
+              <input type="number" id="base-score" onchange="updateExamConfig('baseScore', parseInt(this.value))">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>难度系数（JSON格式）</label>
+            <textarea id="difficulty-config" style="min-height: 60px;" onchange="updateDifficultyConfig()"></textarea>
+          </div>
+          <div class="form-group">
+            <label>分数加成（JSON格式）</label>
+            <textarea id="bonus-config" style="min-height: 80px;" onchange="updateBonusConfig()"></textarea>
+          </div>
+        </div>
+        <div class="exam-config-card">
+          <h4>⏱️ 时间限制（分钟）</h4>
+          <div class="form-row" id="time-limit-config"></div>
+        </div>
+        <div class="exam-config-card">
+          <h4>📈 分数权重</h4>
+          <div class="form-row" id="score-weight-config"></div>
+        </div>
+        <div class="exam-config-card">
+          <h4>🌧️ 考试取消条件</h4>
+          <div class="form-group">
+            <label>天气类型（逗号分隔）</label>
+            <input type="text" id="cancel-weather" onchange="updateCancelWeather()">
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="cancel-holiday" onchange="updateCancelHoliday()"> 假日自动取消
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-effects" class="section">
+        <h2 class="section-title">⚡ 效果类型配置</h2>
+        <div id="effects-list"></div>
+      </section>
+
+      <section id="section-quotes" class="section">
+        <h2 class="section-title">
+          💬 语录管理
+          <button class="btn btn-success btn-sm" onclick="openQuoteModal()">+ 添加语录</button>
+        </h2>
+        <div class="edit-card">
+          <div class="edit-card-title">📊 语录统计</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+            <div style="background: #e3f2fd; padding: 12px; border-radius: 6px; text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #1976d2;" id="default-quotes-count">0</div>
+              <div style="font-size: 12px; color: #666;">默认语录</div>
+            </div>
+          </div>
+        </div>
+        <div id="quotes-list"></div>
+        
+        <div class="edit-card" style="margin-top: 15px;">
+          <div class="edit-card-title">📌 接下来3个即将发生的事件</div>
+          <div id="upcoming-events-preview"></div>
+        </div>
+        <div class="edit-card">
+          <div class="edit-card-title">📊 事件统计</div>
+          <div id="event-stats"></div>
+        </div>
+      </section>
+
+      <section id="section-preview" class="section">
+        <h2 class="section-title">👁️ 事件预告系统预览</h2>
+        <div class="edit-card">
+          <div class="edit-card-title">📌 接下来3个即将发生的事件</div>
+          <div id="upcoming-events-preview-full"></div>
+        </div>
+        <div class="edit-card">
+          <div class="edit-card-title">📊 事件统计</div>
+          <div id="event-stats-full"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="status-bar">
+    <div class="status-indicator">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">已保存</span>
+    </div>
+    <div>版本: <span id="config-version"></span> | 配置对象数: <span id="config-count">0</span></div>
+  </footer>
+
+  <div class="modal" id="event-modal">
+    <div class="modal-content">
+      <h3 class="modal-title" id="event-modal-title">添加随机事件</h3>
+      <div id="event-modal-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('event-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveEvent()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="timeline-modal">
+    <div class="modal-content">
+      <h3 class="modal-title" id="timeline-modal-title">添加时间线事件</h3>
+      <div id="timeline-modal-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('timeline-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveTimelineEvent()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="achievement-modal">
+    <div class="modal-content">
+      <h3 class="modal-title" id="achievement-modal-title">添加成就</h3>
+      <div id="achievement-modal-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('achievement-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveAchievement()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="ending-modal">
+    <div class="modal-content">
+      <h3 class="modal-title" id="ending-modal-title">添加结局</h3>
+      <div id="ending-modal-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('ending-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveEnding()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="highschool-modal">
+    <div class="modal-content">
+      <h3 class="modal-title" id="highschool-modal-title">添加高中</h3>
+      <div id="highschool-modal-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('highschool-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveHighschool()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="effect-modal">
+    <div class="modal-content">
+      <h3 class="modal-title" id="effect-modal-title">添加效果</h3>
+      <div id="effect-modal-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('effect-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveEffect()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="reset-modal">
+    <div class="modal-content">
+      <h3 class="modal-title">确认重置</h3>
+      <p>确定要重置为默认配置吗？当前修改将会丢失。</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('reset-modal')">取消</button>
+        <button class="btn btn-danger" onclick="confirmReset()">确定重置</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="backups-modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <h3 class="modal-title">备份管理</h3>
+      <div id="backups-list"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('backups-modal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="modal" id="quote-modal">
+    <div class="modal-content">
+      <h3 class="modal-title" id="quote-modal-title">添加语录</h3>
+      <div class="form-group">
+        <label>语录内容</label>
+        <textarea id="quote-content" style="min-height: 80px;" placeholder="请输入语录内容..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('quote-modal')">取消</button>
+        <button class="btn btn-primary" onclick="saveQuote()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let contentConfig = {};
+    let originalConfig = {};
+    let isUnsaved = false;
+    let editingEventId = null;
+    let editingTimelineId = null;
+    let editingAchievementId = null;
+    let editingEndingId = null;
+    let editingHighschoolId = null;
+
+    const EFFECTS_CONFIG = {
+      academic: { label: '学业成绩', fields: ['subjects', 'value', 'mode'], subjects: ['chinese', 'math', 'english', 'politics', 'history', 'physics', 'chemistry', 'biology', 'geography', 'sports'] },
+      abilities: { label: '能力属性', fields: ['field', 'value'], fieldsList: ['memory', 'comprehension', 'focus', 'mindset'] },
+      status: { label: '状态属性', fields: ['field', 'value'], fieldsList: ['physical', 'energy', 'stress'] },
+      special: { label: '特殊属性', fields: ['field', 'value'], fieldsList: ['lastStand', 'survival', 'romance', 'highSchoolSigned', 'socialDesire'] },
+      classmateship: { label: '同学关系', fields: ['value'] },
+      dormmates: { label: '舍友关系', fields: ['value'] },
+      teachers: { label: '师生关系', fields: ['value'] },
+      clubExperience: { label: '社团经验', fields: ['value'] },
+      club: { label: '加入社团', fields: ['value'] }
+    };
+
+    const CONDITION_TYPES = {
+      status: { label: '状态条件', fields: ['field', 'operator', 'value'], fieldsList: ['physical', 'energy', 'stress'] },
+      academic: { label: '学业条件', fields: ['field', 'operator', 'value'], subjects: ['chinese', 'math', 'english'] },
+      phase: { label: '阶段条件', fields: ['values'], phases: ['MONTHLY_EXAM', 'MIDTERM', 'FINAL', 'ENTRY_EXAM', 'BIOLOGY_GEOGRAPHY', 'MOCK', 'MIDDLE_EXAM', 'SPORTS_EXAM'] },
+      club: { label: '社团条件', fields: ['value'] },
+      flag: { label: '标记条件', fields: ['field', 'value'] }
+    };
+
+    async function init() {
+      await loadConfig();
+      renderAllSections();
+      updateStatusBar();
+    }
+
+    async function loadConfig() {
+      try {
+        const response = await fetch('content-config.json');
+        contentConfig = await response.json();
+        originalConfig = JSON.parse(JSON.stringify(contentConfig));
+      } catch (e) {
+        console.log('使用内置默认配置');
+        contentConfig = getDefaultConfig();
+      }
+    }
+
+    function getDefaultConfig() {
+      return {
+        version: "2.0.0",
+        lastUpdated: new Date().toISOString().split('T')[0],
+        game: { title: "龙高北重开模拟器", subtitle: "初中三年，重新来过", schoolName: "龙城中学", highSchoolName: "龙城高级中学", startYear: 2022, endYear: 2025 },
+        events: { random: [] },
+        timeline: { events: [] },
+        achievements: [],
+        endings: [],
+        highSchools: { data: [] },
+        examMechanics: { scoreCalculation: { baseScore: 100, difficulty: {}, bonus: {} }, timeLimit: {}, scoreWeight: {}, cancelConditions: { weather: [], holiday: false } },
+        effects: {},
+        quotes: {
+          default: [
+            '学习如逆水行舟，不进则退。',
+            '宝剑锋从磨砺出，梅花香自苦寒来。',
+            '书山有路勤为径，学海无涯苦作舟。',
+            '业精于勤，荒于嬉；行成于思，毁于随。',
+            '少壮不努力，老大徒伤悲。',
+            '宝剑锋从磨砺出，梅花香自苦寒来。',
+            '路漫漫其修远兮，吾将上下而求索。',
+            '不积跬步，无以至千里；不积小流，无以成江海。',
+            '天行健，君子以自强不息。',
+            '知之者不如好之者，好之者不如乐之者。',
+            '学而时习之，不亦说乎？',
+            '温故而知新，可以为师矣。',
+            '三人行，必有我师焉。',
+            '学而不思则罔，思而不学则殆。',
+            '读书破万卷，下笔如有神。'
+          ],
+          custom: []
+        }
+      };
+    }
+
+    function renderAllSections() {
+      renderBasicSection();
+      renderEventsSection();
+      renderTimelineSection();
+      renderAchievementsSection();
+      renderEndingsSection();
+      renderHighschoolsSection();
+      renderExamConfigSection();
+      renderEffectsSection();
+      renderQuotesSection();
+      renderPreviewSection();
+    }
+
+    function renderBasicSection() {
+      document.getElementById('game-title').value = contentConfig.game?.title || '';
+      document.getElementById('game-subtitle').value = contentConfig.game?.subtitle || '';
+      document.getElementById('school-name').value = contentConfig.game?.schoolName || '';
+      document.getElementById('highschool-name').value = contentConfig.game?.highSchoolName || '';
+      document.getElementById('start-year').value = contentConfig.game?.startYear || 2022;
+      document.getElementById('end-year').value = contentConfig.game?.endYear || 2025;
+    }
+
+    function renderEventsSection() {
+      const container = document.getElementById('events-list');
+      container.innerHTML = '';
+      const events = contentConfig.events?.random || [];
+      if (events.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>暂无随机事件，点击上方按钮添加</p></div>';
+        return;
+      }
+      events.forEach((event, index) => {
+        const card = document.createElement('div');
+        card.className = 'edit-card';
+        card.dataset.id = event.id;
+        card.dataset.type = getEventType(event);
+        card.innerHTML = `
+          <div class="array-item-header">
+            <span class="array-item-title">📖 ${event.title || event.id}</span>
+            <div>
+              <button class="btn btn-info btn-sm" onclick="editEvent('${event.id}')">编辑</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteEvent('${event.id}')">删除</button>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #666; margin-bottom: 8px;">${event.description?.substring(0, 100)}...</div>
+          <div style="font-size: 11px; color: #999;">
+            触发概率: ${event.probability || 0} | 冷却: ${event.cooldown || 0}天 | 选项数: ${event.options?.length || 0}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function getEventType(event) {
+      const desc = (event.description || '').toLowerCase();
+      if (desc.includes('学习') || desc.includes('考试') || desc.includes('作业')) return 'academic';
+      if (desc.includes('同学') || desc.includes('朋友') || desc.includes('老师')) return 'social';
+      if (desc.includes('压力') || desc.includes('精力') || desc.includes('身体')) return 'status';
+      return 'other';
+    }
+
+    function filterEvents() {
+      const query = document.getElementById('event-search').value.toLowerCase();
+      const cards = document.querySelectorAll('#events-list .edit-card');
+      cards.forEach(card => {
+        const title = card.querySelector('.array-item-title').textContent.toLowerCase();
+        const visible = title.includes(query);
+        card.style.display = visible ? 'block' : 'none';
+      });
+    }
+
+    function filterEventsByTag(tag) {
+      document.querySelectorAll('#event-filters .filter-tag').forEach(t => t.classList.remove('active'));
+      document.querySelector(`#event-filters .filter-tag[data-filter="${tag}"]`).classList.add('active');
+      const cards = document.querySelectorAll('#events-list .edit-card');
+      cards.forEach(card => {
+        if (tag === 'all') {
+          card.style.display = 'block';
+        } else {
+          card.style.display = card.dataset.type === tag ? 'block' : 'none';
+        }
+      });
+    }
+
+    function openEventModal(eventId = null) {
+      editingEventId = eventId;
+      const modal = document.getElementById('event-modal');
+      const title = document.getElementById('event-modal-title');
+      const content = document.getElementById('event-modal-content');
+      
+      title.textContent = eventId ? '编辑随机事件' : '添加随机事件';
+      const event = eventId ? contentConfig.events.random.find(e => e.id === eventId) : { id: generateId('event'), title: '', description: '', triggerConditions: null, probability: 0.1, once: false, cooldown: 7, options: [] };
+      
+      content.innerHTML = `
+        <div class="form-group">
+          <label>事件ID（英文，唯一）</label>
+          <input type="text" id="event-id" value="${event.id}" ${eventId ? 'readonly' : ''}>
+        </div>
+        <div class="form-group">
+          <label>事件标题</label>
+          <input type="text" id="event-title" value="${event.title || ''}">
+        </div>
+        <div class="form-group">
+          <label>事件描述</label>
+          <textarea id="event-description" style="min-height: 80px;">${event.description || ''}</textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>触发概率 (0-1)</label>
+            <input type="number" id="event-probability" step="0.05" min="0" max="1" value="${event.probability || 0.1}">
+          </div>
+          <div class="form-group">
+            <label>是否只触发一次</label>
+            <select id="event-once">
+              <option value="false" ${!event.once ? 'selected' : ''}>否</option>
+              <option value="true" ${event.once ? 'selected' : ''}>是</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>冷却天数</label>
+          <input type="number" id="event-cooldown" min="0" value="${event.cooldown || 7}">
+        </div>
+        <div class="form-group">
+          <label>触发条件（JSON，可选）</label>
+          <textarea id="event-conditions" style="min-height: 60px;" placeholder='{"type": "status", "field": "energy", "operator": ">", "value": 30}'>${event.triggerConditions ? JSON.stringify(event.triggerConditions, null, 2) : ''}</textarea>
+        </div>
+        <div class="form-group">
+          <label>选项列表</label>
+          <div id="event-options-list"></div>
+          <button class="btn btn-info btn-sm" style="margin-top: 8px;" onclick="addEventOption()">+ 添加选项</button>
+        </div>
+      `;
+      
+      const optionsList = document.getElementById('event-options-list');
+      (event.options || []).forEach((opt, idx) => {
+        renderEventOption(optionsList, opt, idx);
+      });
+      
+      modal.classList.add('active');
+    }
+
+    function renderEventOption(container, option, index) {
+      const div = document.createElement('div');
+      div.className = 'array-item';
+      div.dataset.index = index;
+      div.innerHTML = `
+        <div class="array-item-header">
+          <span>选项 ${index + 1}</span>
+          <button class="btn btn-danger btn-sm" onclick="this.closest('.array-item').remove()">删除</button>
+        </div>
+        <div class="form-group">
+          <label>选项文字</label>
+          <input type="text" class="option-text" value="${option.text || ''}">
+        </div>
+        <div class="form-group">
+          <label>效果列表（JSON数组）</label>
+          <textarea class="option-effects" style="min-height: 60px;">${option.effects ? JSON.stringify(option.effects, null, 2) : '[]'}</textarea>
+        </div>
+        <div class="form-group">
+          <label>后续事件ID（可选）</label>
+          <input type="text" class="option-next" value="${option.nextEvent || ''}">
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function addEventOption() {
+      const container = document.getElementById('event-options-list');
+      const index = container.children.length;
+      renderEventOption(container, { text: '', effects: [] }, index);
+    }
+
+    function saveEvent() {
+      const id = document.getElementById('event-id').value;
+      const title = document.getElementById('event-title').value;
+      const description = document.getElementById('event-description').value;
+      const probability = parseFloat(document.getElementById('event-probability').value);
+      const once = document.getElementById('event-once').value === 'true';
+      const cooldown = parseInt(document.getElementById('event-cooldown').value);
+      
+      let triggerConditions = null;
+      try {
+        const condText = document.getElementById('event-conditions').value.trim();
+        if (condText) triggerConditions = JSON.parse(condText);
+      } catch (e) {
+        showToast('触发条件JSON格式错误', 'error');
+        return;
+      }
+      
+      const options = [];
+      document.querySelectorAll('#event-options-list .array-item').forEach(item => {
+        const text = item.querySelector('.option-text').value;
+        let effects = [];
+        try {
+          const effText = item.querySelector('.option-effects').value.trim();
+          if (effText) effects = JSON.parse(effText);
+        } catch (e) {}
+        const nextEvent = item.querySelector('.option-next').value;
+        if (text) {
+          options.push({ text, effects, ...(nextEvent ? { nextEvent } : {}) });
+        }
+      });
+      
+      const eventData = { id, title, description, triggerConditions, probability, once, cooldown, options };
+      
+      if (editingEventId && editingEventId !== id) {
+        contentConfig.events.random = contentConfig.events.random.filter(e => e.id !== editingEventId);
+      }
+      
+      const existingIdx = contentConfig.events.random.findIndex(e => e.id === id);
+      if (existingIdx >= 0) {
+        contentConfig.events.random[existingIdx] = eventData;
+      } else {
+        contentConfig.events.random.push(eventData);
+      }
+      
+      closeModal('event-modal');
+      renderEventsSection();
+      markUnsaved();
+      showToast(editingEventId ? '事件已更新' : '事件已添加', 'success');
+    }
+
+    function editEvent(id) { openEventModal(id); }
+    
+    function deleteEvent(id) {
+      if (confirm('确定要删除这个事件吗？')) {
+        contentConfig.events.random = contentConfig.events.random.filter(e => e.id !== id);
+        renderEventsSection();
+        markUnsaved();
+        showToast('事件已删除', 'success');
+      }
+    }
+
+    function renderTimelineSection() {
+      const container = document.getElementById('timeline-list');
+      container.innerHTML = '';
+      const events = contentConfig.timeline?.events || [];
+      
+      renderTimelinePreview(events);
+      
+      if (events.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><p>暂无时间线事件，点击上方按钮添加</p></div>';
+        return;
+      }
+      
+      events.sort((a, b) => a.date.localeCompare(b.date)).forEach(event => {
+        const card = document.createElement('div');
+        card.className = 'edit-card';
+        card.dataset.type = event.type || 'key';
+        card.dataset.id = event.id;
+        card.innerHTML = `
+          <div class="array-item-header">
+            <span class="array-item-title">📅 ${event.title || event.id} <span class="badge">${event.date}</span></span>
+            <div>
+              <button class="btn btn-info btn-sm" onclick="editTimelineEvent('${event.id}')">编辑</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTimelineEvent('${event.id}')">删除</button>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #666;">${event.description?.substring(0, 80)}...</div>
+          <div style="font-size: 11px; color: #999; margin-top: 5px;">
+            类型: ${event.type} | 年级: ${event.grade} | 学期: ${event.semester}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderTimelinePreview(events) {
+      const container = document.getElementById('timeline-preview-list');
+      container.innerHTML = '';
+      const sorted = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+      const today = '2022-09-01';
+      
+      sorted.filter(e => e.date >= today).slice(0, 5).forEach(event => {
+        const div = document.createElement('div');
+        div.className = 'timeline-event-item';
+        div.innerHTML = `
+          <span class="timeline-event-date">${event.date}</span>
+          <span>${event.title}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterTimelineEvents() {
+      const query = document.getElementById('timeline-search').value.toLowerCase();
+      const cards = document.querySelectorAll('#timeline-list .edit-card');
+      cards.forEach(card => {
+        const title = card.querySelector('.array-item-title').textContent.toLowerCase();
+        card.style.display = title.includes(query) ? 'block' : 'none';
+      });
+    }
+
+    function filterTimelineByTag(tag) {
+      document.querySelectorAll('#timeline-filters .filter-tag').forEach(t => t.classList.remove('active'));
+      document.querySelector(`#timeline-filters .filter-tag[data-filter="${tag}"]`).classList.add('active');
+      const cards = document.querySelectorAll('#timeline-list .edit-card');
+      cards.forEach(card => {
+        card.style.display = tag === 'all' || card.dataset.type === tag ? 'block' : 'none';
+      });
+    }
+
+    function openTimelineModal(eventId = null) {
+      editingTimelineId = eventId;
+      const modal = document.getElementById('timeline-modal');
+      const title = document.getElementById('timeline-modal-title');
+      const content = document.getElementById('timeline-modal-content');
+      
+      title.textContent = eventId ? '编辑时间线事件' : '添加时间线事件';
+      const event = eventId ? contentConfig.timeline.events.find(e => e.id === eventId) : { 
+        id: generateId('timeline'), title: '', description: '', date: '', type: 'key', grade: 1, semester: 1 
+      };
+      
+      content.innerHTML = `
+        <div class="form-group">
+          <label>事件ID</label>
+          <input type="text" id="timeline-id" value="${event.id}" ${eventId ? 'readonly' : ''}>
+        </div>
+        <div class="form-group">
+          <label>事件标题</label>
+          <input type="text" id="timeline-title" value="${event.title || ''}">
+        </div>
+        <div class="form-group">
+          <label>事件描述</label>
+          <textarea id="timeline-description" style="min-height: 60px;">${event.description || ''}</textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>日期 (YYYY-MM-DD)</label>
+            <input type="date" id="timeline-date" value="${event.date}">
+          </div>
+          <div class="form-group">
+            <label>事件类型</label>
+            <select id="timeline-type">
+              <option value="key" ${event.type === 'key' ? 'selected' : ''}>关键事件</option>
+              <option value="exam" ${event.type === 'exam' ? 'selected' : ''}>考试</option>
+              <option value="holiday" ${event.type === 'holiday' ? 'selected' : ''}>假期</option>
+              <option value="activity" ${event.type === 'activity' ? 'selected' : ''}>活动</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>年级</label>
+            <select id="timeline-grade">
+              <option value="1" ${event.grade === 1 ? 'selected' : ''}>初一</option>
+              <option value="2" ${event.grade === 2 ? 'selected' : ''}>初二</option>
+              <option value="3" ${event.grade === 3 ? 'selected' : ''}>初三</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>学期</label>
+            <select id="timeline-semester">
+              <option value="1" ${event.semester === 1 ? 'selected' : ''}>上学期</option>
+              <option value="2" ${event.semester === 2 ? 'selected' : ''}>下学期</option>
+            </select>
+          </div>
+        </div>
+        <div id="timeline-exam-config" style="display: ${event.type === 'exam' ? 'block' : 'none'};">
+          <div class="form-group">
+            <label>考试类型</label>
+            <select id="timeline-examType" onchange="updateSubjectCheckboxes()">
+              <option value="entry" ${event.examType === 'entry' ? 'selected' : ''}>入学考试</option>
+              <option value="monthly" ${event.examType === 'monthly' ? 'selected' : ''}>月考</option>
+              <option value="midterm" ${event.examType === 'midterm' ? 'selected' : ''}>期中考试</option>
+              <option value="final" ${event.examType === 'final' ? 'selected' : ''}>期末考试</option>
+              <option value="biology_geography" ${event.examType === 'biology_geography' ? 'selected' : ''}>生地会考</option>
+              <option value="sports" ${event.examType === 'sports' ? 'selected' : ''}>体育中考</option>
+              <option value="mock" ${event.examType === 'mock' ? 'selected' : ''}>模拟考试</option>
+              <option value="middle" ${event.examType === 'middle' ? 'selected' : ''}>中考</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>考试科目</label>
+            <div id="subject-checkboxes-container" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9; max-height: 200px; overflow-y: auto;">
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="chinese" ${(event.subjects && event.subjects.includes('chinese')) ? 'checked' : ''}> 语文
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="math" ${(event.subjects && event.subjects.includes('math')) ? 'checked' : ''}> 数学
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="english" ${(event.subjects && event.subjects.includes('english')) ? 'checked' : ''}> 英语
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="politics" ${(event.subjects && event.subjects.includes('politics')) ? 'checked' : ''}> 政治
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="history" ${(event.subjects && event.subjects.includes('history')) ? 'checked' : ''}> 历史
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="physics" ${(event.subjects && event.subjects.includes('physics')) ? 'checked' : ''}> 物理
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="chemistry" ${(event.subjects && event.subjects.includes('chemistry')) ? 'checked' : ''}> 化学
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="biology" ${(event.subjects && event.subjects.includes('biology')) ? 'checked' : ''}> 生物
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="geography" ${(event.subjects && event.subjects.includes('geography')) ? 'checked' : ''}> 地理
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="subject-checkbox" value="sports" ${(event.subjects && event.subjects.includes('sports')) ? 'checked' : ''}> 体育
+              </label>
+            </div>
+            <div style="margin-top: 8px;">
+              <button type="button" class="btn btn-sm btn-secondary" onclick="selectAllSubjects()">全选</button>
+              <button type="button" class="btn btn-sm btn-secondary" onclick="clearAllSubjects()" style="margin-left: 5px;">清空</button>
+              <button type="button" class="btn btn-sm btn-info" onclick="invertSelection()" style="margin-left: 5px;">反选</button>
+            </div>
+          </div>
+        </div>
+        <div id="timeline-options-section" style="display: ${['key', 'holiday', 'activity'].includes(event.type) ? 'block' : 'none'};">
+          <div class="form-group">
+            <label>选项列表（JSON数组，可选）</label>
+            <textarea id="timeline-options" style="min-height: 60px;">${event.options ? JSON.stringify(event.options, null, 2) : '[]'}</textarea>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('timeline-type').onchange = function() {
+        document.getElementById('timeline-exam-config').style.display = this.value === 'exam' ? 'block' : 'none';
+        document.getElementById('timeline-options-section').style.display = ['key', 'holiday', 'activity'].includes(this.value) ? 'block' : 'none';
+      };
+      
+      modal.classList.add('active');
+    }
+
+    function saveTimelineEvent() {
+      const id = document.getElementById('timeline-id').value;
+      const title = document.getElementById('timeline-title').value;
+      const description = document.getElementById('timeline-description').value;
+      const date = document.getElementById('timeline-date').value;
+      const type = document.getElementById('timeline-type').value;
+      const grade = parseInt(document.getElementById('timeline-grade').value);
+      const semester = parseInt(document.getElementById('timeline-semester').value);
+      
+      let eventData = { id, title, description, date, type, grade, semester };
+      
+      if (type === 'exam') {
+        eventData.examType = document.getElementById('timeline-examType').value;
+        // 从复选框获取选中的科目
+        const selectedSubjects = [];
+        const checkboxes = document.querySelectorAll('input[name="subject-checkbox"]:checked');
+        checkboxes.forEach(checkbox => {
+          selectedSubjects.push(checkbox.value);
+        });
+        eventData.subjects = selectedSubjects;
+      }
+      
+      if (['key', 'holiday', 'activity'].includes(type)) {
+        try {
+          const optsText = document.getElementById('timeline-options').value.trim();
+          if (optsText) eventData.options = JSON.parse(optsText);
+        } catch (e) { eventData.options = []; }
+      }
+      
+      if (editingTimelineId && editingTimelineId !== id) {
+        contentConfig.timeline.events = contentConfig.timeline.events.filter(e => e.id !== editingTimelineId);
+      }
+      
+      const existingIdx = contentConfig.timeline.events.findIndex(e => e.id === id);
+      if (existingIdx >= 0) {
+        contentConfig.timeline.events[existingIdx] = eventData;
+      } else {
+        contentConfig.timeline.events.push(eventData);
+      }
+      
+      closeModal('timeline-modal');
+      renderTimelineSection();
+      markUnsaved();
+      showToast(editingTimelineId ? '时间线事件已更新' : '时间线事件已添加', 'success');
+    }
+
+    function editTimelineEvent(id) { openTimelineEventModal(id); }
+    function openTimelineEventModal(id) { openTimelineModal(id); }
+    
+    function deleteTimelineEvent(id) {
+      if (confirm('确定要删除这个时间线事件吗？')) {
+        contentConfig.timeline.events = contentConfig.timeline.events.filter(e => e.id !== id);
+        renderTimelineSection();
+        markUnsaved();
+        showToast('时间线事件已删除', 'success');
+      }
+    }
+
+    function renderAchievementsSection() {
+      const container = document.getElementById('achievements-list');
+      container.innerHTML = '';
+      const achievements = contentConfig.achievements || [];
+      
+      if (achievements.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🏆</div><p>暂无成就，点击上方按钮添加</p></div>';
+        return;
+      }
+      
+      achievements.forEach((ach, index) => {
+        const card = document.createElement('div');
+        card.className = 'edit-card';
+        card.innerHTML = `
+          <div class="array-item-header">
+            <span class="array-item-title">${ach.icon || '🏆'} ${ach.name}</span>
+            <div>
+              <button class="btn btn-info btn-sm" onclick="editAchievement(${index})">编辑</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteAchievement(${index})">删除</button>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #666;">${ach.description}</div>
+          <div style="font-size: 11px; margin-top: 5px;">
+            <span class="badge">${ach.rarity || 'common'}</span>
+            <span style="color: #999;">条件: ${JSON.stringify(ach.condition)}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openAchievementModal(index = null) {
+      editingAchievementId = index;
+      const modal = document.getElementById('achievement-modal');
+      const title = document.getElementById('achievement-modal-title');
+      const content = document.getElementById('achievement-modal-content');
+      
+      title.textContent = index !== null ? '编辑成就' : '添加成就';
+      const ach = index !== null ? contentConfig.achievements[index] : { id: generateId('ach'), name: '', description: '', condition: {}, icon: '🏆', rarity: 'common' };
+      
+      content.innerHTML = `
+        <div class="form-group">
+          <label>成就ID</label>
+          <input type="text" id="ach-id" value="${ach.id}" ${index !== null ? 'readonly' : ''}>
+        </div>
+        <div class="form-group">
+          <label>成就名称</label>
+          <input type="text" id="ach-name" value="${ach.name || ''}">
+        </div>
+        <div class="form-group">
+          <label>成就描述</label>
+          <input type="text" id="ach-desc" value="${ach.description || ''}">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>图标 (emoji)</label>
+            <input type="text" id="ach-icon" value="${ach.icon || '🏆'}">
+          </div>
+          <div class="form-group">
+            <label>稀有度</label>
+            <select id="ach-rarity">
+              <option value="common" ${ach.rarity === 'common' ? 'selected' : ''}>普通</option>
+              <option value="rare" ${ach.rarity === 'rare' ? 'selected' : ''}>稀有</option>
+              <option value="epic" ${ach.rarity === 'epic' ? 'selected' : ''}>史诗</option>
+              <option value="legendary" ${ach.rarity === 'legendary' ? 'selected' : ''}>传说</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>触发条件（JSON）</label>
+          <textarea id="ach-condition" style="min-height: 80px;">${JSON.stringify(ach.condition, null, 2)}</textarea>
+          <div style="font-size: 11px; color: #666; margin-top: 5px;">
+            支持类型: academic, status, phase, rank, club, social, flag, school, stat
+          </div>
+        </div>
+      `;
+      modal.classList.add('active');
+    }
+
+    function saveAchievement() {
+      const id = document.getElementById('ach-id').value;
+      const name = document.getElementById('ach-name').value;
+      const description = document.getElementById('ach-desc').value;
+      const icon = document.getElementById('ach-icon').value;
+      const rarity = document.getElementById('ach-rarity').value;
+      
+      let condition = {};
+      try {
+        condition = JSON.parse(document.getElementById('ach-condition').value || '{}');
+      } catch (e) {
+        showToast('条件JSON格式错误', 'error');
+        return;
+      }
+      
+      const achData = { id, name, description, icon, rarity, condition };
+      
+      if (editingAchievementId !== null) {
+        contentConfig.achievements[editingAchievementId] = achData;
+      } else {
+        contentConfig.achievements.push(achData);
+      }
+      
+      closeModal('achievement-modal');
+      renderAchievementsSection();
+      markUnsaved();
+      showToast(editingAchievementId !== null ? '成就已更新' : '成就已添加', 'success');
+    }
+
+    function editAchievement(index) { openAchievementModal(index); }
+    
+    function deleteAchievement(index) {
+      if (confirm('确定要删除这个成就吗？')) {
+        contentConfig.achievements.splice(index, 1);
+        renderAchievementsSection();
+        markUnsaved();
+        showToast('成就已删除', 'success');
+      }
+    }
+
+    function renderEndingsSection() {
+      const container = document.getElementById('endings-list');
+      container.innerHTML = '';
+      const endings = contentConfig.endings || [];
+      
+      if (endings.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎓</div><p>暂无结局，点击上方按钮添加</p></div>';
+        return;
+      }
+      
+      endings.forEach((ending, index) => {
+        const card = document.createElement('div');
+        card.className = 'edit-card';
+        card.innerHTML = `
+          <div class="array-item-header">
+            <span class="array-item-title">${ending.icon || '🎓'} ${ending.name}</span>
+            <div>
+              <button class="btn btn-info btn-sm" onclick="editEnding(${index})">编辑</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteEnding(${index})">删除</button>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #666;">${ending.description}</div>
+          <div style="font-size: 11px; color: #999; margin-top: 5px;">
+            条件: ${JSON.stringify(ending.condition)}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openEndingModal(index = null) {
+      editingEndingId = index;
+      const modal = document.getElementById('ending-modal');
+      const title = document.getElementById('ending-modal-title');
+      const content = document.getElementById('ending-modal-content');
+      
+      title.textContent = index !== null ? '编辑结局' : '添加结局';
+      const ending = index !== null ? contentConfig.endings[index] : { id: generateId('ending'), name: '', description: '', condition: {}, icon: '🎓' };
+      
+      content.innerHTML = `
+        <div class="form-group">
+          <label>结局ID</label>
+          <input type="text" id="ending-id" value="${ending.id}" ${index !== null ? 'readonly' : ''}>
+        </div>
+        <div class="form-group">
+          <label>结局名称</label>
+          <input type="text" id="ending-name" value="${ending.name || ''}">
+        </div>
+        <div class="form-group">
+          <label>结局描述</label>
+          <textarea id="ending-desc" style="min-height: 60px;">${ending.description || ''}</textarea>
+        </div>
+        <div class="form-group">
+          <label>图标 (emoji)</label>
+          <input type="text" id="ending-icon" value="${ending.icon || '🎓'}">
+        </div>
+        <div class="form-group">
+          <label>触发条件（JSON）</label>
+          <textarea id="ending-condition" style="min-height: 80px;">${JSON.stringify(ending.condition, null, 2)}</textarea>
+          <div style="font-size: 11px; color: #666; margin-top: 5px;">
+            示例: {"type": "score", "field": "percentage", "operator": ">=", "value": 0.6}
+          </div>
+        </div>
+        <div class="form-group">
+          <label>解锁学校（可选）</label>
+          <input type="text" id="ending-school" value="${ending.unlockSchool || ''}">
+        </div>
+      `;
+      modal.classList.add('active');
+    }
+
+    function saveEnding() {
+      const id = document.getElementById('ending-id').value;
+      const name = document.getElementById('ending-name').value;
+      const description = document.getElementById('ending-desc').value;
+      const icon = document.getElementById('ending-icon').value;
+      const unlockSchool = document.getElementById('ending-school').value;
+      
+      let condition = {};
+      try {
+        condition = JSON.parse(document.getElementById('ending-condition').value || '{}');
+      } catch (e) {
+        showToast('条件JSON格式错误', 'error');
+        return;
+      }
+      
+      const endingData = { id, name, description, icon, condition, ...(unlockSchool ? { unlockSchool } : {}) };
+      
+      if (editingEndingId !== null) {
+        contentConfig.endings[editingEndingId] = endingData;
+      } else {
+        contentConfig.endings.push(endingData);
+      }
+      
+      closeModal('ending-modal');
+      renderEndingsSection();
+      markUnsaved();
+      showToast(editingEndingId !== null ? '结局已更新' : '结局已添加', 'success');
+    }
+
+    function editEnding(index) { openEndingModal(index); }
+    
+    function deleteEnding(index) {
+      if (confirm('确定要删除这个结局吗？')) {
+        contentConfig.endings.splice(index, 1);
+        renderEndingsSection();
+        markUnsaved();
+        showToast('结局已删除', 'success');
+      }
+    }
+
+    function renderHighschoolsSection() {
+      const container = document.getElementById('highschools-list');
+      container.innerHTML = '';
+      const schools = contentConfig.highSchools?.data || [];
+      
+      if (schools.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🏫</div><p>暂无学校数据</p></div>';
+        return;
+      }
+      
+      schools.sort((a, b) => b.admissionScore - a.admissionScore).forEach((school, index) => {
+        const div = document.createElement('div');
+        div.className = 'highschool-card';
+        div.dataset.name = school.name.toLowerCase();
+        div.innerHTML = `
+          <span class="highschool-score">${school.admissionScore}分</span>
+          <div class="highschool-info">
+            <div class="highschool-name">${school.name} <span class="badge">${school.type}</span></div>
+            <div class="highschool-features">${school.features?.join(' | ') || ''}</div>
+          </div>
+          <div>
+            <button class="btn btn-info btn-sm" onclick="editHighschool(${index})">编辑</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteHighschool(${index})">删除</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterHighschools() {
+      const query = document.getElementById('highschool-search').value.toLowerCase();
+      document.querySelectorAll('.highschool-card').forEach(card => {
+        card.style.display = card.dataset.name.includes(query) ? 'flex' : 'none';
+      });
+    }
+
+    function openHighschoolModal(index = null) {
+      editingHighschoolId = index;
+      const modal = document.getElementById('highschool-modal');
+      const title = document.getElementById('highschool-modal-title');
+      const content = document.getElementById('highschool-modal-content');
+      
+      title.textContent = index !== null ? '编辑学校' : '添加学校';
+      const school = index !== null ? contentConfig.highSchools.data[index] : { name: '', type: '公办', admissionScore: 500, features: [], description: '' };
+      
+      content.innerHTML = `
+        <div class="form-group">
+          <label>学校名称</label>
+          <input type="text" id="hs-name" value="${school.name || ''}">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>学校类型</label>
+            <select id="hs-type">
+              <option value="公办" ${school.type === '公办' ? 'selected' : ''}>公办</option>
+              <option value="民办" ${school.type === '民办' ? 'selected' : ''}>民办</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>录取分数</label>
+            <input type="number" id="hs-score" value="${school.admissionScore || 500}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>特色标签（逗号分隔）</label>
+          <input type="text" id="hs-features" value="${school.features?.join(', ') || ''}">
+        </div>
+        <div class="form-group">
+          <label>学校描述</label>
+          <textarea id="hs-desc" style="min-height: 60px;">${school.description || ''}</textarea>
+        </div>
+      `;
+      modal.classList.add('active');
+    }
+
+    function saveHighschool() {
+      const name = document.getElementById('hs-name').value;
+      const type = document.getElementById('hs-type').value;
+      const admissionScore = parseInt(document.getElementById('hs-score').value);
+      const features = document.getElementById('hs-features').value.split(',').map(s => s.trim()).filter(s => s);
+      const description = document.getElementById('hs-desc').value;
+      
+      const schoolData = { name, type, admissionScore, features, description };
+      
+      if (editingHighschoolId !== null) {
+        contentConfig.highSchools.data[editingHighschoolId] = schoolData;
+      } else {
+        contentConfig.highSchools.data.push(schoolData);
+      }
+      
+      closeModal('highschool-modal');
+      renderHighschoolsSection();
+      markUnsaved();
+      showToast(editingHighschoolId !== null ? '学校已更新' : '学校已添加', 'success');
+    }
+
+    function editHighschool(index) { openHighschoolModal(index); }
+    
+    function deleteHighschool(index) {
+      if (confirm('确定要删除这个学校吗？')) {
+        contentConfig.highSchools.data.splice(index, 1);
+        renderHighschoolsSection();
+        markUnsaved();
+        showToast('学校已删除', 'success');
+      }
+    }
+
+    function renderExamConfigSection() {
+      const exam = contentConfig.examMechanics || {};
+      const scoreCalc = exam.scoreCalculation || {};
+      
+      document.getElementById('base-score').value = scoreCalc.baseScore || 100;
+      document.getElementById('difficulty-config').value = JSON.stringify(scoreCalc.difficulty || {}, null, 2);
+      document.getElementById('bonus-config').value = JSON.stringify(scoreCalc.bonus || {}, null, 2);
+      
+      const timeLimitContainer = document.getElementById('time-limit-config');
+      timeLimitContainer.innerHTML = '';
+      const timeLimits = exam.timeLimit || {};
+      ['monthly', 'midterm', 'final', 'mock', 'middle'].forEach(type => {
+        timeLimitContainer.innerHTML += `
+          <div class="form-group">
+            <label>${getExamTypeName(type)} (分钟)</label>
+            <input type="number" data-exam-type="${type}" value="${timeLimits[type] || 90}" onchange="updateTimeLimit('${type}', this.value)">
+          </div>
+        `;
+      });
+      
+      const weightContainer = document.getElementById('score-weight-config');
+      weightContainer.innerHTML = '';
+      const weights = exam.scoreWeight || {};
+      ['monthly', 'midterm', 'final', 'mock', 'middle'].forEach(type => {
+        weightContainer.innerHTML += `
+          <div class="form-group">
+            <label>${getExamTypeName(type)} 权重</label>
+            <input type="number" step="0.05" data-weight-type="${type}" value="${weights[type] || 0.1}" onchange="updateScoreWeight('${type}', parseFloat(this.value))">
+          </div>
+        `;
+      });
+      
+      const cancelCond = exam.cancelConditions || {};
+      document.getElementById('cancel-weather').value = (cancelCond.weather || []).join(', ');
+      document.getElementById('cancel-holiday').checked = cancelCond.holiday || false;
+    }
+
+    function getExamTypeName(type) {
+      const names = { monthly: '月考', midterm: '期中', final: '期末', mock: '模拟', middle: '中考' };
+      return names[type] || type;
+    }
+
+    function updateExamConfig(key, value) {
+      if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
+      if (!contentConfig.examMechanics.scoreCalculation) contentConfig.examMechanics.scoreCalculation = {};
+      contentConfig.examMechanics.scoreCalculation[key] = value;
+      markUnsaved();
+    }
+
+    function updateDifficultyConfig() {
+      try {
+        const diff = JSON.parse(document.getElementById('difficulty-config').value);
+        contentConfig.examMechanics.scoreCalculation.difficulty = diff;
+        markUnsaved();
+      } catch (e) { showToast('JSON格式错误', 'error'); }
+    }
+
+    function updateBonusConfig() {
+      try {
+        const bonus = JSON.parse(document.getElementById('bonus-config').value);
+        contentConfig.examMechanics.scoreCalculation.bonus = bonus;
+        markUnsaved();
+      } catch (e) { showToast('JSON格式错误', 'error'); }
+    }
+
+    function updateTimeLimit(type, value) {
+      if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
+      if (!contentConfig.examMechanics.timeLimit) contentConfig.examMechanics.timeLimit = {};
+      contentConfig.examMechanics.timeLimit[type] = parseInt(value);
+      markUnsaved();
+    }
+
+    function updateScoreWeight(type, value) {
+      if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
+      if (!contentConfig.examMechanics.scoreWeight) contentConfig.examMechanics.scoreWeight = {};
+      contentConfig.examMechanics.scoreWeight[type] = value;
+      markUnsaved();
+    }
+
+    function updateCancelWeather() {
+      const weather = document.getElementById('cancel-weather').value.split(',').map(s => s.trim()).filter(s => s);
+      if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
+      if (!contentConfig.examMechanics.cancelConditions) contentConfig.examMechanics.cancelConditions = {};
+      contentConfig.examMechanics.cancelConditions.weather = weather;
+      markUnsaved();
+    }
+
+    function updateCancelHoliday() {
+      const holiday = document.getElementById('cancel-holiday').checked;
+      if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
+      if (!contentConfig.examMechanics.cancelConditions) contentConfig.examMechanics.cancelConditions = {};
+      contentConfig.examMechanics.cancelConditions.holiday = holiday;
+      markUnsaved();
+    }
+
+    function renderEffectsSection() {
+      const container = document.getElementById('effects-list');
+      container.innerHTML = '';
+      
+      for (const [key, config] of Object.entries(EFFECTS_CONFIG)) {
+        const card = document.createElement('div');
+        card.className = 'edit-card';
+        card.innerHTML = `
+          <div class="edit-card-title">⚡ ${config.label} (${key})</div>
+          <div style="font-size: 12px; color: #666;">
+            <div>可用字段: ${config.fieldsList ? config.fieldsList.join(', ') : config.fields.join(', ')}</div>
+            <div style="margin-top: 5px;">示例效果:</div>
+            <pre style="background: #f5f5f5; padding: 8px; border-radius: 4px; margin-top: 5px; font-size: 11px; overflow-x: auto;">${generateEffectExample(key, config)}</pre>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function generateEffectExample(type, config) {
+      const examples = {
+        academic: '{"type": "academic", "subjects": ["math"], "value": 5}',
+        abilities: '{"type": "abilities", "field": "focus", "value": 2}',
+        status: '{"type": "status", "field": "energy", "value": -20}',
+        special: '{"type": "special", "field": "mindset", "value": 5}',
+        classmateship: '{"type": "classmateship", "value": 10}',
+        club: '{"type": "club", "value": "math"}'
+      };
+      return examples[type] || '{}';
+    }
+
+    function renderQuotesSection() {
+      const container = document.getElementById('quotes-list');
+      container.innerHTML = '';
+      
+      const defaultQuotes = contentConfig.quotes?.default || [];
+      
+      document.getElementById('default-quotes-count').textContent = defaultQuotes.length;
+      
+      if (defaultQuotes.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💬</div><p>暂无默认语录，点击上方按钮添加</p></div>';
+        return;
+      }
+      
+      defaultQuotes.forEach((quote, index) => {
+        const card = document.createElement('div');
+        card.className = 'edit-card';
+        card.innerHTML = `
+          <div class="array-item-header">
+            <span class="array-item-title">💬 语录 #${index + 1}</span>
+            <div>
+              <button class="btn btn-info btn-sm" onclick="editQuote(${index}, 'default')">编辑</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteQuote(${index}, 'default')">删除</button>
+            </div>
+          </div>
+          <div style="font-size: 14px; color: #333; padding: 10px; background-color: #f8f9fa; border-radius: 6px;">${quote}</div>
+        `;
+        container.appendChild(card);
+      });
+      
+      renderPreviewSection();
+    }
+
+    function openQuoteModal(index = null, type = 'default') {
+      const modal = document.getElementById('quote-modal');
+      const title = document.getElementById('quote-modal-title');
+      const quotes = contentConfig.quotes?.default || [];
+      const quote = index !== null ? quotes[index] : '';
+      
+      title.textContent = index !== null ? '编辑语录' : '添加语录';
+      document.getElementById('quote-content').value = quote;
+      
+      modal.dataset.editIndex = index !== null ? index : '';
+      modal.classList.add('active');
+    }
+
+    function saveQuote() {
+      const modal = document.getElementById('quote-modal');
+      const content = document.getElementById('quote-content').value.trim();
+      const editIndex = modal.dataset.editIndex;
+      
+      if (!content) {
+        showToast('语录内容不能为空', 'error');
+        return;
+      }
+      
+      if (!contentConfig.quotes) {
+        contentConfig.quotes = { default: [] };
+      }
+      if (!contentConfig.quotes.default) contentConfig.quotes.default = [];
+      
+      if (editIndex !== '') {
+        contentConfig.quotes.default[parseInt(editIndex)] = content;
+        showToast('语录已更新', 'success');
+      } else {
+        contentConfig.quotes.default.push(content);
+        showToast('语录已添加', 'success');
+      }
+      
+      closeModal('quote-modal');
+      renderQuotesSection();
+      markUnsaved();
+    }
+
+    function editQuote(index, type) {
+      openQuoteModal(index, 'default');
+    }
+
+    function deleteQuote(index, type) {
+      if (confirm('确定要删除这条语录吗？')) {
+        contentConfig.quotes.default.splice(index, 1);
+        renderQuotesSection();
+        markUnsaved();
+        showToast('语录已删除', 'success');
+      }
+    }
+
+    function renderPreviewSection() {
+      const upcomingContainer = document.getElementById('upcoming-events-preview-full');
+      const statsContainer = document.getElementById('event-stats-full');
+      const events = contentConfig.timeline?.events || [];
+      const sorted = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+      const today = '2022-09-01';
+      const upcoming = sorted.filter(e => e.date >= today).slice(0, 3);
+      
+      const upcomingHTML = upcoming.length ? upcoming.map(e => `
+        <div class="timeline-event-item">
+          <span class="timeline-event-date">${e.date}</span>
+          <span>${e.title}</span>
+        </div>
+      `).join('') : '<div style="color: #999;">暂无即将到来的事件</div>';
+      
+      const typeCount = {};
+      events.forEach(e => { typeCount[e.type] = (typeCount[e.type] || 0) + 1; });
+      const statsHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+          <div style="background: #e3f2fd; padding: 10px; border-radius: 6px; text-align: center;">
+            <div style="font-size: 20px; font-weight: bold; color: #1976d2;">${events.length}</div>
+            <div style="font-size: 12px; color: #666;">总事件数</div>
+          </div>
+          <div style="background: #fff3e0; padding: 10px; border-radius: 6px; text-align: center;">
+            <div style="font-size: 20px; font-weight: bold; color: #e65100;">${typeCount.key || 0}</div>
+            <div style="font-size: 12px; color: #666;">关键事件</div>
+          </div>
+          <div style="background: #fce4ec; padding: 10px; border-radius: 6px; text-align: center;">
+            <div style="font-size: 20px; font-weight: bold; color: #c2185b;">${typeCount.exam || 0}</div>
+            <div style="font-size: 12px; color: #666;">考试事件</div>
+          </div>
+          <div style="background: #e8f5e9; padding: 10px; border-radius: 6px; text-align: center;">
+            <div style="font-size: 20px; font-weight: bold; color: #2e7d32;">${typeCount.holiday || 0}</div>
+            <div style="font-size: 12px; color: #666;">假期事件</div>
+          </div>
+        </div>
+      `;
+      
+      if (upcomingContainer) upcomingContainer.innerHTML = upcomingHTML;
+      if (statsContainer) statsContainer.innerHTML = statsHTML;
+      
+      const quotesUpcomingContainer = document.getElementById('upcoming-events-preview');
+      const quotesStatsContainer = document.getElementById('event-stats');
+      if (quotesUpcomingContainer) quotesUpcomingContainer.innerHTML = upcomingHTML;
+      if (quotesStatsContainer) quotesStatsContainer.innerHTML = statsHTML;
+    }
+
+    function updateGameInfo(field, value) {
+      if (!contentConfig.game) contentConfig.game = {};
+      contentConfig.game[field] = value;
+      markUnsaved();
+    }
+
+    function generateId(prefix) {
+      return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('section-' + sectionId).classList.add('active');
+      event.target.closest('.nav-item').classList.add('active');
+    }
+
+    function markUnsaved() {
+      isUnsaved = true;
+      document.getElementById('status-dot').classList.add('unsaved');
+      document.getElementById('status-text').textContent = '未保存';
+      document.getElementById('config-count').textContent = countConfigObjects();
+    }
+
+    function countConfigObjects() {
+      let count = 0;
+      if (contentConfig.events?.random) count += contentConfig.events.random.length;
+      if (contentConfig.timeline?.events) count += contentConfig.timeline.events.length;
+      if (contentConfig.achievements) count += contentConfig.achievements.length;
+      if (contentConfig.endings) count += contentConfig.endings.length;
+      if (contentConfig.highSchools?.data) count += contentConfig.highSchools.data.length;
+      return count;
+    }
+
+    function updateStatusBar() {
+      document.getElementById('config-version').textContent = contentConfig.version || '1.0.0';
+      document.getElementById('config-count').textContent = countConfigObjects();
+    }
+
+    function selectAllSubjects() {
+      const checkboxes = document.querySelectorAll('input[name="subject-checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+      });
+    }
+
+    function clearAllSubjects() {
+      const checkboxes = document.querySelectorAll('input[name="subject-checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+    }
+
+    function invertSelection() {
+      const checkboxes = document.querySelectorAll('input[name="subject-checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = !checkbox.checked;
+      });
+    }
+
+    function updateSubjectCheckboxes() {
+      // 根据考试类型自动选择相关科目
+      const examType = document.getElementById('timeline-examType').value;
+      const subjectsByType = {
+        'entry': ['chinese', 'math', 'english'], // 入学考试通常为语数英
+        'monthly': ['chinese', 'math', 'english'], // 月考通常为语数英
+        'midterm': ['chinese', 'math', 'english', 'politics', 'history'], // 期中考试
+        'final': ['chinese', 'math', 'english', 'politics', 'history'], // 期末考试
+        'biology_geography': ['biology', 'geography'], // 生地会考
+        'sports': ['sports'], // 体育中考
+        'mock': ['chinese', 'math', 'english', 'politics', 'history', 'physics', 'chemistry', 'sports'], // 模拟考试
+        'middle': ['chinese', 'math', 'english', 'politics', 'history', 'physics', 'chemistry', 'sports'] // 中考
+      };
+
+      // 清空所有选择
+      clearAllSubjects();
+
+      // 根据考试类型自动选择对应科目
+      if (subjectsByType[examType]) {
+        subjectsByType[examType].forEach(subject => {
+          const checkbox = document.querySelector(`input[name="subject-checkbox"][value="${subject}"]`);
+          if (checkbox) {
+            checkbox.checked = true;
+          }
+        });
+      }
+    }
+
+    async function saveConfig() {
+      contentConfig.lastUpdated = new Date().toISOString().split('T')[0];
+      
+      try {
+        const response = await fetch('http://127.0.0.1:5000/api/config', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(contentConfig)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          localStorage.setItem('lgb_content_config', JSON.stringify(contentConfig));
+          
+          isUnsaved = false;
+          document.getElementById('status-dot').classList.remove('unsaved');
+          document.getElementById('status-text').textContent = '已保存';
+          showToast('配置已保存并应用！', 'success');
+          
+          if (result.backup) {
+            console.log('备份已创建:', result.backup);
+          }
+        } else {
+          showToast('保存失败: ' + result.error, 'error');
+        }
+      } catch (error) {
+        console.error('保存配置时出错:', error);
+        showToast('保存失败，请确保编辑器服务器正在运行', 'error');
+      }
+    }
+
+    function exportConfig() {
+      const blob = new Blob([JSON.stringify(contentConfig, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `content-config-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('配置已导出！', 'success');
+    }
+
+    function importConfig() {
+      document.getElementById('import-file').click();
+    }
+
+    function handleImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          contentConfig = JSON.parse(e.target.result);
+          renderAllSections();
+          markUnsaved();
+          showToast('配置已导入！', 'success');
+        } catch (err) {
+          showToast('导入失败，文件格式错误', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function resetToDefault() {
+      document.getElementById('reset-modal').classList.add('active');
+    }
+
+    function confirmReset() {
+      contentConfig = getDefaultConfig();
+      renderAllSections();
+      closeModal('reset-modal');
+      markUnsaved();
+      showToast('已重置为默认配置', 'warning');
+    }
+
+    async function showBackups() {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/api/backups');
+        const result = await response.json();
+        
+        if (result.success) {
+          const backupsList = document.getElementById('backups-list');
+          
+          if (result.data.length === 0) {
+            backupsList.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">暂无备份文件</p>';
+          } else {
+            backupsList.innerHTML = result.data.map(backup => `
+              <div class="edit-card" style="margin-bottom: 10px;">
+                <div class="array-item-header">
+                  <span class="array-item-title">📄 ${backup.filename}</span>
+                  <div>
+                    <button class="btn btn-info btn-sm" onclick="viewBackup('${backup.filename}')">查看</button>
+                    <button class="btn btn-success btn-sm" onclick="restoreBackup('${backup.filename}')">恢复</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteBackup('${backup.filename}')">删除</button>
+                  </div>
+                </div>
+                <div style="font-size: 12px; color: #666;">
+                  <div>创建时间: ${backup.created}</div>
+                  <div>文件大小: ${(backup.size / 1024).toFixed(2)} KB</div>
+                </div>
+              </div>
+            `).join('');
+          }
+          
+          document.getElementById('backups-modal').classList.add('active');
+        } else {
+          showToast('获取备份列表失败: ' + result.error, 'error');
+        }
+      } catch (error) {
+        console.error('获取备份列表时出错:', error);
+        showToast('获取备份列表失败，请确保编辑器服务器正在运行', 'error');
+      }
+    }
+
+    async function viewBackup(filename) {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/backup/${filename}`);
+        const result = await response.json();
+        
+        if (result.success) {
+          const backupData = JSON.stringify(result.data, null, 2);
+          const newWindow = window.open('', '_blank');
+          newWindow.document.write(`<pre style="white-space: pre-wrap; word-wrap: break-word;">${backupData}</pre>`);
+          newWindow.document.close();
+        } else {
+          showToast('查看备份失败: ' + result.error, 'error');
+        }
+      } catch (error) {
+        console.error('查看备份时出错:', error);
+        showToast('查看备份失败', 'error');
+      }
+    }
+
+    async function restoreBackup(filename) {
+      if (!confirm(`确定要恢复备份 "${filename}" 吗？当前配置将被覆盖。`)) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/backup/${filename}`, {
+          method: 'POST'
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+          contentConfig = result.data;
+          renderAllSections();
+          closeModal('backups-modal');
+          markUnsaved();
+          showToast('备份已恢复', 'success');
+        } else {
+          showToast('恢复备份失败: ' + result.error, 'error');
+        }
+      } catch (error) {
+        console.error('恢复备份时出错:', error);
+        showToast('恢复备份失败', 'error');
+      }
+    }
+
+    async function deleteBackup(filename) {
+      if (!confirm(`确定要删除备份 "${filename}" 吗？此操作不可撤销。`)) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/backup/${filename}`, {
+          method: 'DELETE'
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+          showBackups();
+          showToast('备份已删除', 'success');
+        } else {
+          showToast('删除备份失败: ' + result.error, 'error');
+        }
+      } catch (error) {
+        console.error('删除备份时出错:', error);
+        showToast('删除备份失败', 'error');
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function showToast(message, type = '') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    window.onclick = function(e) {
+      if (e.target.classList.contains('modal')) e.target.classList.remove('active');
+    };
+
+    init();
+  </script>
+</body>
+
+</html>
