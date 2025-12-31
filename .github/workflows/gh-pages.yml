@@ -12,7 +12,8 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  build-and-deploy:
+    environment: github-pages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
