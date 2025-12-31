@@ -994,6 +994,23 @@ const GameUtils = {
         difficulty: 'normal',
         music: true,
         sound: true
+      },
+      // 初始考试机制配置
+      examMechanics: {
+        clickLimit: {
+          monthly: 33,
+          midterm: 33,
+          final: 33,
+          mock: 33,
+          middle: 33
+        },
+        timeLimit: {
+          monthly: 4,
+          midterm: 4,
+          final: 4,
+          mock: 4,
+          middle: 4
+        }
       }
     };
   }

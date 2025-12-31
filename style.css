@@ -250,17 +250,10 @@ body {
 }
 
 /* 特定面板样式调整 */
-.daily-action-panel,
-.academic-panel,
 .social-panel {
   padding: 15px;
   text-align: left;
   background-color: #f8f9fa;
-}
-
-.daily-action-panel .action-options,
-.academic-panel .subject-list {
-  margin: 15px 0;
 }
 
 .social-panel .social-sections {
@@ -470,8 +463,6 @@ h4 {
 /* 剧情界面 */
 .story-panel,
 .allocate-panel,
-.daily-action-panel,
-.academic-panel,
 .social-panel {
   text-align: center;
   padding: 30px 20px;
@@ -596,83 +587,7 @@ h4 {
   background-color: #e3f2fd;
 }
 
-/* 行动选项 */
-.action-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 500px;
-  margin: 20px auto;
-}
 
-.action-option {
-  padding: 15px;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: left;
-}
-
-.action-option:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: #4a90e2;
-}
-
-.action-option h4 {
-  margin-bottom: 5px;
-  color: #1a237e;
-}
-
-.action-option p {
-  margin: 0;
-  font-size: 13px;
-  color: #666;
-}
-
-.action-effects {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #28a745;
-}
-
-/* 学业面板 */
-.subject-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 500px;
-  margin: 20px auto;
-}
-
-.subject-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 15px;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-}
-
-.subject-item .subject-name {
-  font-weight: bold;
-  color: #1a237e;
-}
-
-.subject-item .subject-score {
-  font-size: 18px;
-  font-weight: bold;
-  color: #28a745;
-}
-
-.subject-item .subject-full {
-  font-size: 12px;
-  color: #999;
-  margin-left: 5px;
-}
 
 /* 人际关系面板 */
 .social-sections {

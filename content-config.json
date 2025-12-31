@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "lastUpdated": "2025-12-28",
+  "lastUpdated": "2025-12-31",
   "author": "玩家定制版",
   "game": {
     "title": "龙高北重开模拟器",
@@ -22,31 +22,11 @@
     "panels": {
       "playerStats": "玩家属性",
       "gameLog": "游戏日志",
-      "dailyActions": "日常行动",
-      "academicPanel": "学业面板",
       "socialPanel": "人际关系",
       "timelinePanel": "时间线",
       "upcomingEvents": "即将到来"
     },
     "actions": {
-      "study": {
-        "name": "📚 认真学习",
-        "description": "选择一个科目进行学习，提升该科目成绩",
-        "energyCost": 20,
-        "timeCost": 1
-      },
-      "rest": {
-        "name": "😴 休息一下",
-        "description": "恢复精力和体力",
-        "energyCost": -10,
-        "timeCost": 1
-      },
-      "askTeacher": {
-        "name": "📖 问老师问题",
-        "description": "去办公室向老师请教问题",
-        "energyCost": 10,
-        "timeCost": 1
-      },
       "club": {
         "name": "🎨 社团活动",
         "description": "参加社团活动",
@@ -1977,6 +1957,13 @@
         "red_typhoon"
       ],
       "holiday": true
+    },
+    "clickLimit": {
+      "monthly": 55,
+      "midterm": 55,
+      "final": 55,
+      "mock": 55,
+      "middle": 55
     }
   },
   "achievements": [

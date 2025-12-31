@@ -7,7 +7,8 @@ class ExamEmbedSystem {
     
     // 游戏状态变量
     this.grid = [];
-    this.clicksLeft = 33;
+    this.clicksLeft = 0;
+    this.clickLimit = 0;
     this.timeLeft = 240; // 4分钟 = 240秒
     this.currentScore = 0.00;
     this.flippedCount = 0;
@@ -32,6 +33,12 @@ class ExamEmbedSystem {
     // 隐藏其他面板
     this.gameController.closeAllPanels();
     
+    // 隐藏推进一天按钮
+    const quickActions = document.querySelector('.quick-actions');
+    if (quickActions) {
+      quickActions.style.display = 'none';
+    }
+    
     // 显示考试面板
     const examPanel = document.getElementById('exam-panel');
     const examTitle = document.getElementById('exam-title');
@@ -46,7 +53,7 @@ class ExamEmbedSystem {
         <div class="game-info">
           <div class="info-item">
             <span>剩余点击次数:</span>
-            <span id="clicks-left">33</span>
+            <span id="clicks-left">0</span>
           </div>
           <div class="info-item">
             <span>剩余时间:</span>
@@ -83,7 +90,7 @@ class ExamEmbedSystem {
             <li>每次点击不仅减少当前格子的代价，还会随机影响2-4个周围格子（包括对角线方向）的代价</li>
             <li>特殊格子（4分）随机出现，优先处理高分格子可获得更高分数</li>
             <li>WA状态得0分，NEC状态获得部分分数，AC状态获得满分</li>
-            <li>仅有33次点击机会，合理规划点击顺序，利用随机连锁影响机制最大化得分</li>
+            <li>仅有<span id="click-limit-info">0</span>次点击机会，合理规划点击顺序，利用随机连锁影响机制最大化得分</li>
           </ul>
         </div>
 
@@ -172,10 +179,10 @@ class ExamEmbedSystem {
       score: this.currentScore, // 使用当前游戏得分
       maxScore: 100, // 最大可能分数
       timeSpent: 240 - this.timeLeft, // 花费时间
-      clicksUsed: 33 - this.clicksLeft, // 使用的点击次数
+      clicksUsed: this.clickLimit - this.clicksLeft, // 使用的点击次数
       flippedCount: this.flippedCount, // 翻开的格子数
       totalCells: 49, // 总格子数
-      hasClicked: (33 - this.clicksLeft) > 0 // 是否点击过格子
+      hasClicked: (this.clickLimit - this.clicksLeft) > 0 // 是否点击过格子
     };
   }
 
@@ -367,12 +374,39 @@ class ExamEmbedSystem {
   // 初始化游戏
   initGame() {
     // 重置游戏状态
-    this.clicksLeft = 33;
-    this.timeLeft = 240;
+    // 获取考试配置
+    const defaultClickLimit = 333;
+    const defaultTimeLimit = 240;
+    let clickLimit = defaultClickLimit;
+    let timeLimit = defaultTimeLimit;
+    
+    // 尝试从游戏控制器获取考试配置
+    if (this.gameController && this.gameController.gameState && this.gameController.gameState.examMechanics) {
+      const examConfig = this.gameController.gameState.examMechanics;
+      // 使用统一的点击次数设置，不再区分考试类型
+      if (examConfig.clickLimit) {
+        // 优先使用统一配置，如果没有则使用默认值
+        clickLimit = examConfig.clickLimit.unified || Object.values(examConfig.clickLimit)[0] || defaultClickLimit;
+      }
+      if (examConfig.timeLimit) {
+        // 统一时间设置，不再区分考试类型
+        timeLimit = (examConfig.timeLimit.unified || Object.values(examConfig.timeLimit)[0] || defaultTimeLimit / 60) * 60; // 转换为秒
+      }
+    }
+    
+    this.clickLimit = clickLimit;
+    this.clicksLeft = clickLimit;
+    this.timeLeft = timeLimit;
     this.currentScore = 0.00;
     this.flippedCount = 0;
     this.grid = [];
     this.gameActive = true;
+    
+    // 更新点击次数限制信息
+    const clickLimitInfoElement = document.getElementById('click-limit-info');
+    if (clickLimitInfoElement) {
+      clickLimitInfoElement.textContent = clickLimit;
+    }
     
     // 清空网格
     const gridElement = document.getElementById('grid');
@@ -794,13 +828,13 @@ class ExamEmbedSystem {
     // 根据得分显示性能评价
     if (performanceMessageElement) {
       if (this.currentScore >= 80) {
-        performanceMessageElement.textContent = '卓越表现！在仅33次点击的限制下达到高分，您是真正的策略大师！';
+        performanceMessageElement.textContent = `卓越表现！在仅${this.clickLimit}次点击的限制下达到高分，您是真正的策略大师！`;
       } else if (this.currentScore >= 70) {
         performanceMessageElement.textContent = '优秀成绩！在有限点击次数下策略运用得当！';
       } else if (this.currentScore >= 60) {
         performanceMessageElement.textContent = '良好表现！继续练习以优化点击策略！';
       } else {
-        performanceMessageElement.textContent = '继续练习，在33次点击限制下掌握连锁影响策略可大幅提升分数！';
+        performanceMessageElement.textContent = `继续练习，在${this.clickLimit}次点击限制下掌握连锁影响策略可大幅提升分数！`;
       }
     }
     

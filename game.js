@@ -135,6 +135,11 @@ class GameController {
       const response = await fetch('content-config.json');
       const config = await response.json();
       
+      // 加载考试机制配置
+      if (config.examMechanics) {
+        this.gameState.examMechanics = config.examMechanics;
+      }
+      
       if (config.timeline && config.timeline.events) {
         for (const event of config.timeline.events) {
           if (event.type === 'exam') {
@@ -805,121 +810,7 @@ class GameController {
   }
 
 
-  showDailyActions() {
-    const panel = document.getElementById('daily-action-panel');
-    const optionsContainer = document.getElementById('action-options');
 
-    optionsContainer.innerHTML = '';
-
-    // 检查是否在考试期间
-    const inExamPeriod = this.isInExamPeriod();
-
-    // 如果在考试期间，只显示考试相关活动
-    let actions = [];
-    if (inExamPeriod) {
-      actions = [
-        {
-          id: 'exam',
-          title: '📝 参加考试',
-          description: '进入当前考试，完成考试科目',
-          effects: () => this.showExamActivities(),
-          showCondition: () => true
-        },
-        {
-          id: 'rest',
-          title: '😴 休息一下',
-          description: '恢复精力和体力，为考试做准备',
-          effects: () => {
-            this.applyEffects({
-              status: { physical: 20, energy: 25, stress: -10 }
-            });
-            this.addLog('你好好休息了一会儿，感觉精力充沛！', 'success');
-          },
-          showCondition: () => true
-        }
-      ];
-    } else {
-      actions = [
-        {
-          id: 'study',
-          title: '📚 认真学习',
-          description: '选择一个科目进行学习，提升该科目成绩',
-          effects: () => this.showSubjectSelection('study'),
-          showCondition: () => true
-        },
-        {
-          id: 'rest',
-          title: '😴 休息一下',
-          description: '恢复精力和体力',
-          effects: () => {
-            this.applyEffects({
-              status: { physical: 20, energy: 25, stress: -10 }
-            });
-            this.addLog('你好好休息了一会儿，感觉精力充沛！', 'success');
-          },
-          showCondition: () => true
-        },
-        {
-          id: 'ask_teacher',
-          title: '📖 问老师问题',
-          description: '去办公室向老师请教问题',
-          effects: () => this.showTeacherSelection(),
-          showCondition: () => true
-        },
-        {
-          id: 'club',
-          title: '🎨 社团活动',
-          description: '参加社团活动',
-          effects: () => this.showClubActivities(),
-          showCondition: () => this.gameState.player.club !== null
-        },
-        {
-          id: 'exercise',
-          title: '🏃 锻炼身体',
-          description: '进行体育锻炼',
-          effects: () => {
-            const sportsBonus = RandomUtils.randomInt(1, 3);
-            this.applyEffects({
-              academic: { sports: sportsBonus },
-              status: { physical: -15, energy: -10 }
-            });
-            this.addLog(`锻炼完成，体育+${sportsBonus}`, 'success');
-          },
-          showCondition: () => true
-        },
-        {
-          id: 'social',
-          title: '👥 社交活动',
-          description: '和同学交流，维护人际关系',
-          effects: () => {
-            const friendBonus = RandomUtils.randomInt(5, 15);
-            this.applyEffects({
-              classmateship: { increase: friendBonus },
-              status: { energy: -5 }
-            });
-            this.addLog(`社交活动完成，同学关系+${friendBonus}`, 'success');
-          },
-          showCondition: () => true
-        }
-      ];
-    }
-
-    actions.forEach(action => {
-      if (action.showCondition()) {
-        const optionDiv = document.createElement('div');
-        optionDiv.className = 'action-option';
-        optionDiv.innerHTML = `
-          <h4>${action.title}</h4>
-          <p>${action.description}</p>
-        `;
-        optionDiv.onclick = action.effects;
-        optionsContainer.appendChild(optionDiv);
-      }
-    });
-
-    // 显示导航面板并激活日常行动部分
-    this.activateNavSection('daily-actions');
-  }
 
   // 显示考试活动
   showExamActivities() {
@@ -944,30 +835,8 @@ class GameController {
     });
     
     if (currentExamEvents.length > 0) {
-      // 显示考试选择界面
-      const panel = document.getElementById('academic-panel');
-      const subjectList = document.getElementById('subject-list');
-      
-      subjectList.innerHTML = '<h3>当前考试</h3>';
-      
-      currentExamEvents.forEach(event => {
-        const examEl = document.createElement('div');
-        examEl.className = 'exam-item';
-        
-        // 构建科目列表字符串
-        const subjectNames = event.subjects.map(subject => SUBJECTS[subject]?.name || subject).join('、');
-        
-        examEl.innerHTML = `
-          <div class="exam-info">
-            <h4>${this.getExamTypeName(event.examType)}</h4>
-            <p>科目: ${subjectNames}</p>
-          </div>
-          <button class="btn blue" onclick="game.startExamEventById('${event.id}')">开始考试</button>
-        `;
-        subjectList.appendChild(examEl);
-      });
-      
-      panel.style.display = 'block';
+      // 直接触发第一个考试事件，不再使用面板选择
+      this.startExamEvent(currentExamEvents[0]);
     } else {
       this.addLog('当前没有可参加的考试', 'info');
     }
@@ -983,140 +852,6 @@ class GameController {
     }
   }
 
-  showSubjectSelection(actionType) {
-    const subjects = GRADES[this.gameState.gameTime.grade].subjects;
-    
-    // 根据abilities计算各科成绩
-    const scores = GameUtils.calculateSubjectScores(this.gameState.player.abilities, this.gameState.gameTime.grade);
-
-    const panel = document.getElementById('academic-panel');
-    const subjectList = document.getElementById('subject-list');
-
-    subjectList.innerHTML = '';
-
-    subjects.forEach(subject => {
-      const subjectEl = document.createElement('div');
-      subjectEl.className = 'subject-item';
-      subjectEl.innerHTML = `
-        <span class="subject-name">${SUBJECTS[subject].name}</span>
-        <span>
-          <span class="subject-score">${scores[subject] || 0}</span>
-          <span class="subject-full">/${SUBJECTS[subject].fullScore}</span>
-        </span>
-      `;
-      subjectEl.onclick = () => {
-        this.handleStudyAction(subject, actionType);
-      };
-      subjectList.appendChild(subjectEl);
-    });
-
-    panel.style.display = 'block';
-  }
-
-  handleStudyAction(subject, actionType) {
-    const efficiency = GameUtils.learningEfficiency(this.gameState.player.abilities);
-    let increase = Math.floor(RandomUtils.randomFloat(1, 4) * efficiency);
-
-    if (this.gameState.player.status.energy < 20) {
-      increase = Math.floor(increase * 0.5);
-      this.addLog('精力不足，学习效率降低', 'warning');
-    }
-
-    // 定义科目与能力的对应关系
-    const subjectAbilityMapping = {
-      chinese: { memory: 0.6, comprehension: 0.4 },
-      math: { comprehension: 0.6, focus: 0.4 },
-      english: { memory: 0.5, comprehension: 0.5 },
-      politics: { memory: 0.5, comprehension: 0.5 },
-      history: { memory: 0.6, comprehension: 0.4 },
-      physics: { comprehension: 0.6, focus: 0.4 },
-      chemistry: { comprehension: 0.6, focus: 0.4 },
-      biology: { memory: 0.5, comprehension: 0.5 },
-      geography: { memory: 0.5, comprehension: 0.5 },
-      sports: { focus: 0.5, mindset: 0.5 }
-    };
-
-    const mapping = subjectAbilityMapping[subject] || { memory: 0.25, comprehension: 0.25, focus: 0.25, mindset: 0.25 };
-
-    // 根据权重增加对应的能力
-    for (const [ability, weight] of Object.entries(mapping)) {
-      const abilityIncrease = Math.floor(increase * weight);
-      this.gameState.player.abilities[ability] = NumberUtils.clamp(
-        this.gameState.player.abilities[ability] + abilityIncrease, 0, 100
-      );
-    }
-
-    this.applyEffects({
-      status: { energy: -20, stress: 5 }
-    });
-
-    this.addLog(`学习了${StringUtils.camelToChinese(subject)}，能力提升`, 'success');
-    this.updateAcademicDisplay();
-
-    document.getElementById('academic-panel').style.display = 'none';
-  }
-
-  showTeacherSelection() {
-    const panel = document.getElementById('academic-panel');
-    const subjectList = document.getElementById('subject-list');
-
-    subjectList.innerHTML = '';
-
-    this.gameState.teachers.forEach(teacher => {
-      const subjectEl = document.createElement('div');
-      subjectEl.className = 'subject-item';
-      subjectEl.innerHTML = `
-        <span class="subject-name">${teacher.name}（${SUBJECTS[teacher.subject].name}老师）</span>
-        <span>亲和力: ${teacher.helpfulness}</span>
-      `;
-      subjectEl.onclick = () => {
-        this.handleAskTeacher(teacher);
-      };
-      subjectList.appendChild(subjectEl);
-    });
-
-    panel.style.display = 'block';
-  }
-
-  handleAskTeacher(teacher) {
-    const subject = teacher.subject;
-    const increase = RandomUtils.randomInt(2, 5);
-    
-    // 定义科目与能力的对应关系
-    const subjectAbilityMapping = {
-      chinese: { memory: 0.6, comprehension: 0.4 },
-      math: { comprehension: 0.6, focus: 0.4 },
-      english: { memory: 0.5, comprehension: 0.5 },
-      politics: { memory: 0.5, comprehension: 0.5 },
-      history: { memory: 0.6, comprehension: 0.4 },
-      physics: { comprehension: 0.6, focus: 0.4 },
-      chemistry: { comprehension: 0.6, focus: 0.4 },
-      biology: { memory: 0.5, comprehension: 0.5 },
-      geography: { memory: 0.5, comprehension: 0.5 },
-      sports: { focus: 0.5, mindset: 0.5 }
-    };
-
-    const mapping = subjectAbilityMapping[subject] || { memory: 0.25, comprehension: 0.25, focus: 0.25, mindset: 0.25 };
-
-    // 根据权重增加对应的能力
-    for (const [ability, weight] of Object.entries(mapping)) {
-      const abilityIncrease = Math.floor(increase * weight);
-      this.gameState.player.abilities[ability] = NumberUtils.clamp(
-        this.gameState.player.abilities[ability] + abilityIncrease, 0, 100
-      );
-    }
-
-    this.applyEffects({
-      status: { energy: -10 },
-      teachers: { increase: 5 }
-    });
-
-    this.addLog(`向${teacher.name}请教了${StringUtils.camelToChinese(subject)}，${StringUtils.camelToChinese(subject)}+${increase}，师生关系+5`, 'success');
-    this.updateAcademicDisplay();
-
-    document.getElementById('academic-panel').style.display = 'none';
-  }
-
   showClubActivities() {
     const activities = CLUB_EVENTS;
 
@@ -1128,33 +863,6 @@ class GameController {
         }
       }
     });
-  }
-
-  showAcademicPanel() {
-    const panel = document.getElementById('academic-panel');
-    const subjectList = document.getElementById('subject-list');
-
-    subjectList.innerHTML = '';
-
-    const grade = this.gameState.gameTime.grade;
-    const scores = GameUtils.calculateSubjectScores(this.gameState.player.abilities, grade);
-    const subjects = GRADES[grade].subjects;
-
-    subjects.forEach(subject => {
-      const subjectEl = document.createElement('div');
-      subjectEl.className = 'subject-item';
-      subjectEl.innerHTML = `
-        <span class="subject-name">${SUBJECTS[subject].name}</span>
-        <span>
-          <span class="subject-score">${scores[subject] || 0}</span>
-          <span class="subject-full">/${SUBJECTS[subject].fullScore}</span>
-        </span>
-      `;
-      subjectList.appendChild(subjectEl);
-    });
-
-    // 显示导航面板并激活学业面板部分
-    this.activateNavSection('academic-panel');
   }
 
   showSocialPanel() {
@@ -1422,19 +1130,13 @@ class GameController {
     
     // 激活对应的导航项和显示对应的面板部分
     const targetNavItems = {
-      'daily-actions': 'daily-actions',
-      'academic-panel': 'academic-panel',
       'social-panel': 'social-panel'
     };
     
     // 根据传入的sectionName找到对应的导航项名称
     let navSectionName = sectionName;
-    if (sectionName === 'academic-panel') {
-      navSectionName = 'academic-panel';
-    } else if (sectionName === 'social-panel') {
+    if (sectionName === 'social-panel') {
       navSectionName = 'social-panel';
-    } else if (sectionName === 'daily-actions') {
-      navSectionName = 'daily-actions';
     }
     
     const navItem = document.querySelector(`[onclick*="toggleNavSection('${navSectionName}')"]`);
@@ -1508,15 +1210,14 @@ class GameController {
   backToGame() {
     // 检查结果面板是否显示
     const resultPanel = document.getElementById('result-panel');
-    const confirmBtn = resultPanel ? resultPanel.querySelector('button') : null;
     
     // 关闭所有面板
     this.closeAllPanels();
     
-    // 如果确认按钮存在且文字为"确认"，则推进一天
-    // 这表示当前是成绩单界面，且没有下一场考试
-    if (confirmBtn && confirmBtn.textContent === '确认') {
-      this.advanceDay();
+    // 显示推进一天按钮
+    const quickActions = document.querySelector('.quick-actions');
+    if (quickActions) {
+      quickActions.style.display = 'block';
     }
     
     // 检查成就
