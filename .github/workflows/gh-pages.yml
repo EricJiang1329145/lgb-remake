@@ -1,0 +1,32 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]  # 监听 main 或 master 分支的推送
+  
+  workflow_dispatch:  # 允许手动触发
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 上传整个仓库目录作为静态文件
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
