@@ -819,40 +819,75 @@ h4 {
 }
 
 .grid {
+  /* 基础网格布局 */
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(7, 1fr);
-  aspect-ratio: 1/1; /* 保持正方形比例 */
-  max-width: 420px; /* 限制最大宽度 */
-  max-height: 420px; /* 限制最大高度 */
-  width: 100%;
-  height: auto;
-  gap: 4px;
-  background-color: #e9ecef;
-  padding: 10px;
-  border-radius: 8px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  
+  /* 响应式尺寸控制 */
+  aspect-ratio: 1 / 1;
+  width: min(100%, 450px); /* 使用min()函数限制最大宽度 */
+  max-height: 80vh; /* 限制最大高度为视口高度的80% */
+  
+  /* 视觉优化 */
+  gap: clamp(3px, 0.8vw, 6px); /* 响应式间隙 */
+  background-color: #e3e6e9;
+  padding: clamp(8px, 2vw, 15px); /* 响应式内边距 */
+  border-radius: clamp(6px, 1.5vw, 10px); /* 响应式圆角 */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 添加阴影增强立体感 */
+  
+  /* 动画效果 */
+  transition: all 0.3s ease;
+  
+  /* 确保网格项正确对齐 */
+  align-content: center;
+  justify-content: center;
 }
 
+/* 响应式调整：在小屏幕上优化布局 */
+@media (max-width: 500px) {
+  .grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-rows: repeat(7, minmax(0, 1fr));
+    gap: 2px;
+    padding: 6px;
+  }
+}
+
+/* 网格容器的悬停效果 */
+.grid:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* 增强单元格样式 */
 .cell {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: clamp(4px, 1vw, 8px); /* 响应式圆角 */
   background: linear-gradient(135deg, #555555, #444444);
-  transition: all 0.3s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* 更平滑的过渡 */
   position: relative;
   user-select: none;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.2);
-  min-height: 0; /* 确保单元格可以缩小 */
-  min-width: 0;  /* 确保单元格可以缩小 */
+  min-height: 0;
+  min-width: 0;
+  outline: none; /* 增强可访问性 */
 }
 
+/* 单元格焦点状态 */
+.cell:focus {
+  box-shadow: inset 0 0 0 2px #4a90e2, 0 0 0 3px rgba(74, 144, 226, 0.3);
+}
+
+/* 单元格悬停效果 */
 .cell:hover {
   transform: scale(1.05);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 2;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .cell .cost {
@@ -1040,6 +1075,125 @@ h4 {
 .game-info {
   position: relative;
   align-items: center;
+}
+
+/* 成绩单模态框样式 */
+.report-card-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* 确保在所有其他元素上方 */
+  backdrop-filter: blur(3px); /* 添加背景模糊效果 */
+}
+
+.report-card-modal.active {
+  display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 模态框内容样式 */
+.report-card-modal .modal-content {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  width: 1000px; /* 固定宽度，确保两列布局有足够空间 */
+  animation: slideUp 0.3s ease;
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 上滑动画 */
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px); 
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0); 
+  }
+}
+
+/* 报告内容样式 */
+.report-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* 单列样式 */
+.report-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 调整各部分样式以适应两列布局 */
+.detailed-report .total-score-section,
+.report-card-modal .total-score-section {
+  margin-bottom: 0;
+  padding: 15px;
+}
+
+.detailed-report .subjects-section,
+.detailed-report .top-students-section,
+.detailed-report .chart-section,
+.report-card-modal .subjects-section,
+.report-card-modal .top-students-section,
+.report-card-modal .chart-section {
+  margin-bottom: 0;
+}
+
+/* 紧凑的排名列表 */
+.detailed-report .top-students-list,
+.report-card-modal .top-students-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* 调整图表大小 */
+.detailed-report .chart-section,
+.report-card-modal .chart-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.detailed-report .chart-section canvas,
+.report-card-modal .chart-section canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 响应式设计：在小屏幕上改为单列 */
+@media (max-width: 768px) {
+  .report-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .detailed-report .top-students-list,
+  .report-card-modal .top-students-list {
+    max-height: 250px;
+  }
+  
+  /* 小屏幕上模态框占满宽度 */
+  .report-card-modal .modal-content {
+    width: 95%;
+  }
 }
 
 .game-over {
@@ -1455,6 +1609,158 @@ h4 {
 }
 
 /* 成绩单样式 */
+.report-card-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* 初始状态样式 */
+.report-summary {
+  text-align: center;
+  padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.report-summary h3 {
+  margin-bottom: 15px;
+  color: #1a237e;
+}
+
+.report-summary p {
+  margin: 8px 0;
+  color: #333;
+  font-size: 1.1em;
+}
+
+.report-summary p strong {
+  color: #1a237e;
+}
+
+/* 查看按钮样式 */
+#view-report-btn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 1.1em;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#view-report-btn:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+/* 详细成绩单样式 */
+.detailed-report {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* 报告头部样式 */
+.detailed-report .report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #e3f2fd;
+  border-bottom: 1px solid #bbdefb;
+}
+
+.detailed-report .report-header h3 {
+  margin: 0;
+  color: #1565c0;
+}
+
+/* 关闭按钮样式 */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background-color: #f5f5f5;
+  color: #333;
+  transform: scale(1.1);
+}
+
+/* 两列布局 */
+.report-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* 单列样式 */
+.report-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 调整各部分样式以适应两列布局 */
+.detailed-report .total-score-section {
+  margin-bottom: 0;
+  padding: 15px;
+}
+
+.detailed-report .subjects-section,
+.detailed-report .top-students-section,
+.detailed-report .chart-section {
+  margin-bottom: 0;
+}
+
+/* 紧凑的排名列表 */
+.detailed-report .top-students-list {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+/* 调整图表大小 */
+.detailed-report .chart-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.detailed-report .chart-section canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 响应式设计：在小屏幕上改为单列 */
+@media (max-width: 768px) {
+  .report-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .detailed-report .top-students-list {
+    max-height: 250px;
+  }
+}
+
+/* 报告卡片样式（兼容旧样式） */
 .report-card {
   text-align: left;
   max-width: 800px;

@@ -1815,38 +1815,77 @@ class GameController {
     // 隐藏其他面板
     this.closeAllPanels();
     
-    // 显示结果面板
+    // 显示结果面板，只显示摘要和查看按钮
     resultTitle.textContent = '考试成绩单';
     
-    // 构建成绩单HTML
+    // 构建基础HTML，只显示查看按钮
     let html = `
-      <div class="report-card">
-        <div class="report-header">
+      <div class="report-card-container">
+        <div id="report-summary" class="report-summary">
           <h3>考试结果</h3>
           <p>考试日期: ${new Date(this.gameState.gameTime.year, this.gameState.gameTime.month - 1, this.gameState.gameTime.day).toLocaleDateString('zh-CN')}</p>
-        </div>
-        
-        <div class="total-score-section">
-          <h4>总成绩</h4>
-          <div class="score-display">
-            <span class="score-value">${playerRanking.totalScore}</span>
-            <span class="score-grade grade-${playerRanking.totalGrade}">${playerRanking.totalGrade}</span>
-          </div>
+          <p>总成绩: <strong>${playerRanking.totalScore}</strong> (${playerRanking.totalGrade})</p>
           <p>年级排名: <strong>${playerRanking.totalRank}</strong> / ${playerRanking.totalStudents}</p>
+          <button id="view-report-btn" class="btn btn-primary">点击查看详细成绩单</button>
+        </div>
+      </div>
+    `;
+    
+    resultContent.innerHTML = html;
+    
+    // 设置按钮初始状态：禁用确认按钮
+    if (confirmBtn) {
+      confirmBtn.textContent = '确认';
+      confirmBtn.disabled = true;
+      confirmBtn.style.opacity = '0.5';
+      confirmBtn.style.cursor = 'not-allowed';
+    }
+    
+    resultPanel.style.display = 'block';
+    
+    // 设置事件为活跃状态，防止在成绩单显示时推进一天
+    this.isEventActive = true;
+    
+    // 创建成绩单模态框的HTML结构（如果不存在）
+    let reportModal = document.getElementById('report-card-modal');
+    if (!reportModal) {
+      reportModal = document.createElement('div');
+      reportModal.id = 'report-card-modal';
+      reportModal.className = 'report-card-modal';
+      document.body.appendChild(reportModal);
+    }
+    
+    // 构建详细成绩单HTML，用于模态框显示
+    let modalHtml = `
+      <div class="modal-content">
+        <div class="report-header">
+          <h3>详细成绩单</h3>
+          <button id="close-report-modal" class="modal-close">&times;</button>
         </div>
         
-        <div class="subjects-section">
-          <h4>各科成绩</h4>
-          <table class="subject-table">
-            <thead>
-              <tr>
-                <th>科目</th>
-                <th>成绩</th>
-                <th>等级</th>
-                <th>排名</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div class="report-content">
+          <div class="report-column">
+            <div class="total-score-section">
+              <h4>总成绩</h4>
+              <div class="score-display">
+                <span class="score-value">${playerRanking.totalScore}</span>
+                <span class="score-grade grade-${playerRanking.totalGrade}">${playerRanking.totalGrade}</span>
+              </div>
+              <p>年级排名: <strong>${playerRanking.totalRank}</strong> / ${playerRanking.totalStudents}</p>
+            </div>
+            
+            <div class="subjects-section">
+              <h4>各科成绩</h4>
+              <table class="subject-table">
+                <thead>
+                  <tr>
+                    <th>科目</th>
+                    <th>成绩</th>
+                    <th>等级</th>
+                    <th>排名</th>
+                  </tr>
+                </thead>
+                <tbody>
     `;
     
     // 添加各科成绩
@@ -1864,7 +1903,7 @@ class GameController {
     };
     
     for (const [subject, data] of Object.entries(playerRanking.subjects)) {
-      html += `
+      modalHtml += `
         <tr>
           <td>${subjectNames[subject] || subject}</td>
           <td>${data.score}</td>
@@ -1874,14 +1913,16 @@ class GameController {
       `;
     }
     
-    html += `
-            </tbody>
-          </table>
-        </div>
-        
-        <div class="top-students-section">
-          <h4>年级前三十</h4>
-          <div class="top-students-list">
+    modalHtml += `
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="report-column">
+            <div class="top-students-section">
+              <h4>年级前三十</h4>
+              <div class="top-students-list">
     `;
     
     // 添加年级前三十
@@ -1889,7 +1930,7 @@ class GameController {
     for (let i = 0; i < topStudents.length; i++) {
       const student = topStudents[i];
       const isPlayer = student.isPlayer;
-      html += `
+      modalHtml += `
         <div class="top-student-item ${isPlayer ? 'player-highlight' : ''}">
           <span class="rank">${i + 1}</span>
           <span class="name">${isPlayer ? '玩家' : student.name}</span>
@@ -1898,33 +1939,69 @@ class GameController {
       `;
     }
     
-    html += `
+    modalHtml += `
+              </div>
+            </div>
+            
+            <div class="chart-section">
+              <h4>排名趋势</h4>
+              <canvas id="ranking-chart" width="300" height="200"></canvas>
+            </div>
           </div>
-        </div>
-        
-        <div class="chart-section">
-          <h4>排名趋势</h4>
-          <canvas id="ranking-chart" width="600" height="300"></canvas>
         </div>
       </div>
     `;
     
-    resultContent.innerHTML = html;
+    // 更新模态框内容
+    reportModal.innerHTML = modalHtml;
     
-    // 设置按钮文字
-    if (confirmBtn) {
-      confirmBtn.textContent = '确认';
+    // 添加交互逻辑
+    const viewReportBtn = document.getElementById('view-report-btn');
+    const closeReportModalBtn = document.getElementById('close-report-modal');
+    
+    // 点击查看详细成绩单，显示模态框
+    if (viewReportBtn) {
+      viewReportBtn.addEventListener('click', () => {
+        // 显示模态框
+        reportModal.classList.add('active');
+        
+        // 启用确认按钮
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.style.opacity = '1';
+          confirmBtn.style.cursor = 'pointer';
+        }
+        
+        // 绘制排名折线图
+        setTimeout(() => {
+          this.drawRankingChart();
+        }, 100);
+      });
     }
     
-    resultPanel.style.display = 'block';
+    // 点击关闭按钮，隐藏模态框
+    const closeModal = () => {
+      reportModal.classList.remove('active');
+      
+      // 禁用确认按钮
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.style.opacity = '0.5';
+        confirmBtn.style.cursor = 'not-allowed';
+      }
+    };
     
-    // 设置事件为活跃状态，防止在成绩单显示时推进一天
-    this.isEventActive = true;
+    // 点击关闭按钮
+    if (closeReportModalBtn) {
+      closeReportModalBtn.addEventListener('click', closeModal);
+    }
     
-    // 绘制排名折线图
-    setTimeout(() => {
-      this.drawRankingChart();
-    }, 100);
+    // 点击模态框外部区域关闭
+    reportModal.addEventListener('click', (e) => {
+      if (e.target === reportModal) {
+        closeModal();
+      }
+    });
   }
   
   // 绘制排名折线图
