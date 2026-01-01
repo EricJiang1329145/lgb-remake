@@ -1743,18 +1743,17 @@
       document.getElementById('difficulty-config').value = JSON.stringify(scoreCalc.difficulty || {}, null, 2);
       document.getElementById('bonus-config').value = JSON.stringify(scoreCalc.bonus || {}, null, 2);
       
-      // 渲染统一时间限制配置
       const timeLimitContainer = document.getElementById('time-limit-config');
       timeLimitContainer.innerHTML = '';
       const timeLimits = exam.timeLimit || {};
-      // 使用统一时间设置，不再区分考试类型
-      const unifiedTimeLimit = timeLimits.unified || Object.values(timeLimits)[0] || 4;
-      timeLimitContainer.innerHTML += `
-        <div class="form-group">
-          <label>统一考试时间 (分钟)</label>
-          <input type="number" step="1" id="unified-time-limit" value="${unifiedTimeLimit}" onchange="updateUnifiedTimeLimit(parseInt(this.value))">
-        </div>
-      `;
+      ['monthly', 'midterm', 'final', 'mock', 'middle'].forEach(type => {
+        timeLimitContainer.innerHTML += `
+          <div class="form-group">
+            <label>${getExamTypeName(type)} (分钟)</label>
+            <input type="number" data-exam-type="${type}" value="${timeLimits[type] || 90}" onchange="updateTimeLimit('${type}', this.value)">
+          </div>
+        `;
+      });
       
       const weightContainer = document.getElementById('score-weight-config');
       weightContainer.innerHTML = '';
@@ -1819,6 +1818,13 @@
       } catch (e) { showToast('JSON格式错误', 'error'); }
     }
 
+    function updateTimeLimit(type, value) {
+      if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
+      if (!contentConfig.examMechanics.timeLimit) contentConfig.examMechanics.timeLimit = {};
+      contentConfig.examMechanics.timeLimit[type] = parseInt(value);
+      markUnsaved();
+    }
+
     function updateScoreWeight(type, value) {
       if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
       if (!contentConfig.examMechanics.scoreWeight) contentConfig.examMechanics.scoreWeight = {};
@@ -1831,14 +1837,6 @@
       if (!contentConfig.examMechanics.clickLimit) contentConfig.examMechanics.clickLimit = {};
       // 只设置统一点击次数，不再区分考试类型
       contentConfig.examMechanics.clickLimit.unified = value;
-      markUnsaved();
-    }
-
-    function updateUnifiedTimeLimit(value) {
-      if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
-      if (!contentConfig.examMechanics.timeLimit) contentConfig.examMechanics.timeLimit = {};
-      // 只设置统一时间限制，不再区分考试类型
-      contentConfig.examMechanics.timeLimit.unified = value;
       markUnsaved();
     }
 
