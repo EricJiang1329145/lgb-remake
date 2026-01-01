@@ -103,12 +103,7 @@ class ExamEmbedSystem {
           </div>
         </div>
 
-        <div id="game-over" class="game-over hidden">
-          <h2>游戏结束</h2>
-          <p>最终得分: <span id="final-score">0.00</span></p>
-          <p id="game-over-message"></p>
-          <p id="performance-message"></p>
-        </div>
+
       </div>
     `;
     
@@ -426,11 +421,7 @@ class ExamEmbedSystem {
       gridElement.innerHTML = '';
     }
     
-    // 隐藏游戏结束界面
-    const gameOverElement = document.getElementById('game-over');
-    if (gameOverElement) {
-      gameOverElement.classList.add('hidden');
-    }
+
     
     // 更新UI
     this.updateUI();
@@ -880,29 +871,6 @@ class ExamEmbedSystem {
     if (this.timer) {
       clearInterval(this.timer);
     }
-    
-    const finalScoreElement = document.getElementById('final-score');
-    const gameOverMessageElement = document.getElementById('game-over-message');
-    const gameOverElement = document.getElementById('game-over');
-    const performanceMessageElement = document.getElementById('performance-message');
-    
-    if (finalScoreElement) finalScoreElement.textContent = this.currentScore.toFixed(2);
-    if (gameOverMessageElement) gameOverMessageElement.textContent = message;
-    
-    // 根据得分显示性能评价
-    if (performanceMessageElement) {
-      if (this.currentScore >= 80) {
-        performanceMessageElement.textContent = `卓越表现！在仅${this.clickLimit}次点击的限制下达到高分，您是真正的策略大师！`;
-      } else if (this.currentScore >= 70) {
-        performanceMessageElement.textContent = '优秀成绩！在有限点击次数下策略运用得当！';
-      } else if (this.currentScore >= 60) {
-        performanceMessageElement.textContent = '良好表现！继续练习以优化点击策略！';
-      } else {
-        performanceMessageElement.textContent = `继续练习，在${this.clickLimit}次点击限制下掌握连锁影响策略可大幅提升分数！`;
-      }
-    }
-    
-    if (gameOverElement) gameOverElement.classList.remove('hidden');
   }
 
   // 显示考试结果
@@ -991,12 +959,6 @@ class ExamEmbedSystem {
     const examPanel = document.getElementById('exam-panel');
     if (examPanel) {
       examPanel.style.display = 'none';
-    }
-    
-    // 如果有游戏结束界面，也隐藏它
-    const gameOverElement = document.getElementById('game-over');
-    if (gameOverElement) {
-      gameOverElement.classList.add('hidden');
     }
     
     // 通知游戏控制器考试已完成

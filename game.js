@@ -47,12 +47,14 @@ class GameController {
     this.lastQuoteDate = null; // 上次刷新语录的日期
   }
 
-  init() {
+  async init() {
     this.loadSettings();
     this.bindEvents();
     this.updateUI();
     // 初始化考试系统
     this.initExamSystem();
+    // 加载内容配置
+    await ContentLoader.load();
     // 加载语录配置
     this.loadContentConfigQuotes();
     // 初始化语录显示
@@ -1299,53 +1301,8 @@ class GameController {
   }
 
   updateAcademicDisplay() {
-    const grade = this.gameState.gameTime.grade;
-    
-    // 根据abilities计算各科成绩
-    const scores = GameUtils.calculateSubjectScores(this.gameState.player.abilities, grade);
-
-    document.getElementById('academic-chinese').textContent = scores.chinese || 0;
-    document.getElementById('academic-math').textContent = scores.math || 0;
-    document.getElementById('academic-english').textContent = scores.english || 0;
-    document.getElementById('academic-politics').textContent = scores.politics || 0;
-    document.getElementById('academic-history').textContent = scores.history || 0;
-    document.getElementById('academic-sports').textContent = scores.sports || 0;
-
-    const physicsEl = document.getElementById('academic-physics');
-    const physicsValEl = document.getElementById('academic-physics-val');
-    if (grade >= 2) {
-      physicsEl.style.display = 'block';
-      physicsValEl.textContent = scores.physics || 0;
-    } else {
-      physicsEl.style.display = 'none';
-    }
-
-    const chemistryEl = document.getElementById('academic-chemistry');
-    const chemistryValEl = document.getElementById('academic-chemistry-val');
-    if (grade >= 3) {
-      chemistryEl.style.display = 'block';
-      chemistryValEl.textContent = scores.chemistry || 0;
-    } else {
-      chemistryEl.style.display = 'none';
-    }
-
-    const biologyEl = document.getElementById('academic-biology');
-    const biologyValEl = document.getElementById('academic-biology-val');
-    if (grade <= 2) {
-      biologyEl.style.display = 'block';
-      biologyValEl.textContent = scores.biology || 0;
-    } else {
-      biologyEl.style.display = 'none';
-    }
-
-    const geographyEl = document.getElementById('academic-geography');
-    const geographyValEl = document.getElementById('academic-geography-val');
-    if (grade <= 2) {
-      geographyEl.style.display = 'block';
-      geographyValEl.textContent = scores.geography || 0;
-    } else {
-      geographyEl.style.display = 'none';
-    }
+    // 学业属性已在HTML中隐藏，不再更新显示
+    // 仅保留函数结构，避免调用时出错
   }
 
   addLog(message, type = 'normal') {
@@ -1470,9 +1427,12 @@ class GameController {
     });
   }
 
-  showChangelog() {
+  async showChangelog() {
     // 不要隐藏整个start-screen，只隐藏开始按钮
     document.querySelector('.start-buttons').style.display = 'none';
+    
+    // 确保配置已加载
+    await ContentLoader.load();
     
     // 动态加载更新日志
     const changelogEntries = ContentLoader.getChangelog();
@@ -1921,12 +1881,12 @@ class GameController {
           
           <div class="report-column">
             <div class="top-students-section">
-              <h4>年级前三十</h4>
+              <h4>年级前二十</h4>
               <div class="top-students-list">
     `;
     
-    // 添加年级前三十
-    const topStudents = ranking.slice(0, 30);
+    // 添加年级前二十
+    const topStudents = ranking.slice(0, 20);
     for (let i = 0; i < topStudents.length; i++) {
       const student = topStudents[i];
       const isPlayer = student.isPlayer;
@@ -1983,12 +1943,8 @@ class GameController {
     const closeModal = () => {
       reportModal.classList.remove('active');
       
-      // 禁用确认按钮
-      if (confirmBtn) {
-        confirmBtn.disabled = true;
-        confirmBtn.style.opacity = '0.5';
-        confirmBtn.style.cursor = 'not-allowed';
-      }
+      // 不再禁用确认按钮，用户查看过成绩单后应该可以点击确认
+      // 保持确认按钮启用状态
     };
     
     // 点击关闭按钮
@@ -2255,6 +2211,6 @@ function toggleLogPanel() {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  game.init();
+window.addEventListener('DOMContentLoaded', async () => {
+  await game.init();
 });

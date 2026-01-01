@@ -33,17 +33,7 @@
         <div class="nav-section" id="player-stats-section" style="display: none;">
           <div class="player-stats">
             <div class="player-stats-detail">
-              <!-- 学业属性 -->
-              <p data-tooltip="中考语文满分">语文: <span id="academic-chinese">120</span></p>
-              <p data-tooltip="中考数学满分">数学: <span id="academic-math">100</span></p>
-              <p data-tooltip="中考英语满分">英语: <span id="academic-english">100</span></p>
-              <p data-tooltip="中考政治满分">政治: <span id="academic-politics">50</span></p>
-              <p data-tooltip="中考历史满分">历史: <span id="academic-history">70</span></p>
-              <p data-tooltip="初二开始加入" id="academic-physics" style="display:none;">物理: <span id="academic-physics-val">70</span></p>
-              <p data-tooltip="初三开始加入" id="academic-chemistry" style="display:none;">化学: <span id="academic-chemistry-val">70</span></p>
-              <p data-tooltip="生地会考后移除" id="academic-biology" style="display:none;">生物: <span id="academic-biology-val">100</span></p>
-              <p data-tooltip="生地会考后移除" id="academic-geography" style="display:none;">地理: <span id="academic-geography-val">100</span></p>
-              <p data-tooltip="中考体育满分">体育: <span id="academic-sports">50</span></p>
+              <!-- 学业属性已隐藏 -->
               <!-- 能力属性 -->
               <p data-tooltip="影响记忆效果">记忆力: <span id="ability-memory">50</span></p>
               <p data-tooltip="影响理解能力">理解力: <span id="ability-comprehension">50</span></p>
@@ -297,7 +287,8 @@
       
       // 获取已达成的成就列表（从游戏存档中读取）
       const savedGame = StorageUtils.load('lgb_save');
-      const achievedAchievements = savedGame ? savedGame.achievements : [];
+      // 确保achievedAchievements是数组，避免undefined调用includes方法
+      const achievedAchievements = savedGame && savedGame.achievements ? savedGame.achievements : [];
       
       // 过滤并渲染已达成的成就
       const achievedAchievementData = achievementsData.filter(achievement => 
@@ -337,6 +328,11 @@
     function getConditionText(condition) {
       if (!condition) return '未知条件';
       
+      if (typeof condition === 'function') {
+        // 如果是函数类型的条件，返回描述性文本
+        return '达成特定游戏目标';
+      }
+      
       const conditionType = condition.type;
       switch (conditionType) {
         case 'academic':
@@ -361,8 +357,10 @@
           }
         case 'rank':
           return `考试排名${condition.operator}${condition.value}`;
+        case 'event':
+          return `完成事件：${condition.value}`;
         default:
-          return JSON.stringify(condition);
+          return '达成特定游戏目标';
       }
     }
     
