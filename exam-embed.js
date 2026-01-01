@@ -71,6 +71,7 @@ class ExamEmbedSystem {
             <span>已翻开格子:</span>
             <span id="flipped-count">0</span>/49
           </div>
+          <button id="instructions-btn" class="btn info small">游戏说明</button>
         </div>
         
         <div class="game-board">
@@ -83,15 +84,23 @@ class ExamEmbedSystem {
           <button id="submit-btn" class="btn green">交卷</button>
         </div>
 
-        <div class="instructions">
-          <h3>游戏说明</h3>
-          <ul>
-            <li>点击格子可减少其代价值，代价值降为0或以下时格子变为AC状态并获得分数</li>
-            <li>每次点击不仅减少当前格子的代价，还会随机影响2-4个周围格子（包括对角线方向）的代价</li>
-            <li>特殊格子（4分）随机出现，优先处理高分格子可获得更高分数</li>
-            <li>WA状态得0分，NEC状态获得部分分数，AC状态获得满分</li>
-            <li>仅有<span id="click-limit-info">0</span>次点击机会，合理规划点击顺序，利用随机连锁影响机制最大化得分</li>
-          </ul>
+        <!-- 游戏说明模态框 -->
+        <div id="instructions-modal" class="instructions-modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>游戏说明</h3>
+              <button id="close-instructions" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+              <ul>
+                <li>点击格子可减少其代价值，代价值降为0或以下时格子变为AC状态并获得分数</li>
+                <li>每次点击不仅减少当前格子的代价，还会随机影响2-4个周围格子（包括对角线方向）的代价</li>
+                <li>特殊格子（4分）随机出现，优先处理高分格子可获得更高分数</li>
+                <li>WA状态得0分，NEC状态获得部分分数，AC状态获得满分</li>
+                <li>仅有<span id="click-limit-info-modal">0</span>次点击机会，合理规划点击顺序，利用随机连锁影响机制最大化得分</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <div id="game-over" class="game-over hidden">
@@ -408,6 +417,9 @@ class ExamEmbedSystem {
       clickLimitInfoElement.textContent = clickLimit;
     }
     
+    // 更新模态框中的点击次数限制信息
+    this.updateClickLimitInfoModal();
+    
     // 清空网格
     const gridElement = document.getElementById('grid');
     if (gridElement) {
@@ -507,6 +519,49 @@ class ExamEmbedSystem {
     const submitButton = document.getElementById('submit-btn');
     if (submitButton) {
       submitButton.addEventListener('click', () => this.submitExam());
+    }
+    
+    // 添加游戏说明模态框事件监听器
+    const instructionsBtn = document.getElementById('instructions-btn');
+    const instructionsModal = document.getElementById('instructions-modal');
+    const closeInstructionsBtn = document.getElementById('close-instructions');
+    
+    // 显示模态框
+    if (instructionsBtn && instructionsModal) {
+      instructionsBtn.addEventListener('click', () => {
+        instructionsModal.classList.add('active');
+        // 更新模态框中的点击次数限制信息
+        this.updateClickLimitInfoModal();
+      });
+    }
+    
+    // 关闭模态框
+    const closeModal = () => {
+      if (instructionsModal) {
+        instructionsModal.classList.remove('active');
+      }
+    };
+    
+    // 点击关闭按钮
+    if (closeInstructionsBtn) {
+      closeInstructionsBtn.addEventListener('click', closeModal);
+    }
+    
+    // 点击模态框外部区域关闭
+    if (instructionsModal) {
+      instructionsModal.addEventListener('click', (e) => {
+        if (e.target === instructionsModal) {
+          closeModal();
+        }
+      });
+    }
+  }
+  
+  // 更新模态框中的点击次数限制信息
+  updateClickLimitInfoModal() {
+    const clickLimitInfoModal = document.getElementById('click-limit-info-modal');
+    if (clickLimitInfoModal) {
+      clickLimitInfoModal.textContent = this.clickLimit;
     }
   }
 
