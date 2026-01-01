@@ -96,6 +96,29 @@ class GameController {
   async startNewGame() {
     this.gameState = GameUtils.createInitialSave();
     this.gameState.settings = { ...this.settings };
+    
+    // 从content-config.json加载配置并应用开始时间
+    try {
+      const response = await fetch('content-config.json');
+      const config = await response.json();
+      
+      // 应用开始时间设置
+      if (config.game) {
+        const gameConfig = config.game;
+        if (gameConfig.startYear) {
+          this.gameState.gameTime.year = gameConfig.startYear;
+        }
+        if (gameConfig.startMonth) {
+          this.gameState.gameTime.month = gameConfig.startMonth;
+        }
+        if (gameConfig.startDay) {
+          this.gameState.gameTime.day = gameConfig.startDay;
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load content config:', error);
+    }
+    
     await this.loadKeyEvents(); // 加载关键事件
     this.generateInitialNPCs();
     this.initializeTopStudents(); // 初始化年级前30名学生

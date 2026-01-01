@@ -536,6 +536,16 @@
               <input type="number" id="start-year" onchange="updateGameInfo('startYear', parseInt(this.value))">
             </div>
             <div class="form-group">
+              <label>开始月份</label>
+              <input type="number" id="start-month" min="1" max="12" onchange="updateGameInfo('startMonth', parseInt(this.value))">
+            </div>
+            <div class="form-group">
+              <label>开始日期</label>
+              <input type="number" id="start-day" min="1" max="31" onchange="updateGameInfo('startDay', parseInt(this.value))">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
               <label>结束年份</label>
               <input type="number" id="end-year" onchange="updateGameInfo('endYear', parseInt(this.value))">
             </div>
@@ -918,6 +928,8 @@
       document.getElementById('school-name').value = contentConfig.game?.schoolName || '';
       document.getElementById('highschool-name').value = contentConfig.game?.highSchoolName || '';
       document.getElementById('start-year').value = contentConfig.game?.startYear || 2022;
+      document.getElementById('start-month').value = contentConfig.game?.startMonth || 8;
+      document.getElementById('start-day').value = contentConfig.game?.startDay || 23;
       document.getElementById('end-year').value = contentConfig.game?.endYear || 2025;
     }
 
@@ -1766,6 +1778,11 @@
           <label>统一考试点击次数</label>
           <input type="number" step="1" id="unified-click-limit" value="${unifiedClickLimit}" onchange="updateUnifiedClickLimit(parseInt(this.value))">
         </div>
+        <div class="form-group">
+          <label>自动答题速度 (毫秒)</label>
+          <input type="number" step="10" min="10" id="auto-solve-speed" value="${exam.autoSolveSpeed || 50}" onchange="updateAutoSolveSpeed(parseInt(this.value))">
+          <small>数值越小，答题速度越快（默认：50毫秒）</small>
+        </div>
       `;
       
       const cancelCond = exam.cancelConditions || {};
@@ -1820,6 +1837,12 @@
       if (!contentConfig.examMechanics.clickLimit) contentConfig.examMechanics.clickLimit = {};
       // 只设置统一点击次数，不再区分考试类型
       contentConfig.examMechanics.clickLimit.unified = value;
+      markUnsaved();
+    }
+
+    function updateAutoSolveSpeed(value) {
+      if (!contentConfig.examMechanics) contentConfig.examMechanics = {};
+      contentConfig.examMechanics.autoSolveSpeed = value;
       markUnsaved();
     }
 

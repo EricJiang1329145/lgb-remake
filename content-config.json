@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "lastUpdated": "2025-12-31",
+  "lastUpdated": "2026-01-01",
   "author": "玩家定制版",
   "game": {
     "title": "龙高北重开模拟器",
@@ -10,6 +10,8 @@
     "schoolName": "龙华高级中学教育集团观澜校区",
     "highSchoolName": "龙华高级中学",
     "startYear": 2022,
+    "startMonth": 8,
+    "startDay": 23,
     "endYear": 2025
   },
   "ui": {
@@ -703,11 +705,11 @@
         "id": "pre_school_exam",
         "title": "学前考试",
         "description": "开学前的摸底测验，考查语数英三科，作为入学参考。考完后获得\"我是龙高人\"成就。",
-        "date": "2022-08-25",
+        "date": "2022-08-24",
         "type": "exam",
         "grade": 1,
         "semester": 1,
-        "examType": "pre_entry",
+        "examType": "entry",
         "subjects": [
           "chinese",
           "math",

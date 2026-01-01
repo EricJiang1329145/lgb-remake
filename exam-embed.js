@@ -456,6 +456,15 @@ class ExamEmbedSystem {
             autoSolveButton.classList.add('running');
             autoSolveButton.textContent = '停止自动答题';
             
+            // 获取自动答题速度配置
+            let autoSolveSpeed = 50; // 默认0.05秒
+            if (this.gameController && this.gameController.gameState && this.gameController.gameState.examMechanics) {
+              const examConfig = this.gameController.gameState.examMechanics;
+              if (examConfig.autoSolveSpeed) {
+                autoSolveSpeed = examConfig.autoSolveSpeed;
+              }
+            }
+            
             autoSolveInterval = setInterval(() => {
               if (!this.gameActive || this.clicksLeft <= 0) {
                 // 如果游戏结束或点击次数用完，停止自动答题
@@ -488,7 +497,7 @@ class ExamEmbedSystem {
                 autoSolveButton.classList.remove('running');
                 autoSolveButton.textContent = '自动答题';
               }
-            }, 50); // 每0.05秒点击一次，进一步加快自动答题速度
+            }, autoSolveSpeed); // 使用配置的自动答题速度
           }
         }
       });

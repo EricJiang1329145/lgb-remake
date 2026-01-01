@@ -954,7 +954,7 @@ const GameUtils = {
       gameTime: {
         year: 2022,
         month: 8,
-        day: 24,
+        day: 23,
         week: 1,
         grade: 1,
         semester: 1,
